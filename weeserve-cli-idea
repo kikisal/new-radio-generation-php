@@ -1,0 +1,15 @@
+weeserve create "radiogeneration"
+weeserve use "radiogeneration"
+weeserve target "apache" root "C\xampp\htdocs"
+
+weeserve install mocky 
+-- retrieves mocky git repo from package registry --
+-- executes git clone [PACKAGE-URL] and stores it in root folder inside libs --
+-- stores change in deps.json --
+
+or
+
+weeserve install
+-- reads deps.json --
+-- installs all packages inside deps.json --
+-- stores them in root inside libs folder --
