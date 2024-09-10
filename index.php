@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/assets/style.css?cache=<?= time() ?>" />
     <script src="assets/js/feeder.js?v=<?= time(); ?>"></script>
 </head>
-
 <body>
     <div class="over" id="over">
         <div class="overlay">
@@ -127,83 +126,86 @@
                             </div>
                         </div>
                     </div>
-                    <div class="news-list dflex row-dir small-news">
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
+                    <div>
+                        <div class="news-list dflex row-dir small-news">
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
 
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
+                        <div class="v-separator-even-3"></div>
+                        <div class="news-list dflex row-dir small-news">
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
 
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
+                            </div>
+                            <div class="news-item-small pr-3">
+                                <div class="news-image"></div>
+                                <div class="text-container">
+                                    <div class="text-title-place"></div>
+                                    <div class="vertical-sep"></div>
+                                    <div class="text-date-place"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
+                        <div class="v-separator-even-3"></div>
+                        
                     </div>
-                    <div class="v-separator-even-3"></div>
-                    <div class="news-list dflex row-dir small-news">
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
-                        <div class="news-item-small pr-3">
-                            <div class="news-image"></div>
-                            <div class="text-container">
-                                <div class="text-title-place"></div>
-                                <div class="vertical-sep"></div>
-                                <div class="text-date-place"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="v-separator-even-3"></div>
                     
                     <!-- No more feeds to show.
                     <div class="feed-end"></div>

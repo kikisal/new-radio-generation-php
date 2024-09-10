@@ -1,6 +1,7 @@
 
 const DEBUG_MODE = true;
 
+
 function textConditional(t1, t2, pred) {
     return pred ? t1 : t2;
 }
@@ -62,6 +63,195 @@ async function http_fetch(req_desc) {
     } catch(err) {
         console.warn(`Error while loading feeds: `, err);
         return null;
+    }
+}
+
+function createComponent(component, parent, data, renderer) {
+    const instance  = new component(data);
+    instance.parent = parent;
+    instance.setRenderer(renderer);
+
+    instance.onViewCreated();
+
+    return instance;
+}
+
+class View {
+    constructor() {
+        this._viewElement = document.createElement('div');
+        this._needsUpdate = false;
+        this._parent      = null;
+        this._children    = [];
+        this._renderer    = null;
+    }
+
+    setRenderer(renderer) {
+        this._renderer = renderer;
+    }
+
+    keep() {
+        return {
+            mode: 'keep'
+        };
+    }
+
+    append(components) {
+        this._children = this._children.concat(components);
+
+        return {
+            mode: 'append',
+            components
+        };
+    }
+
+    comp(arr) {
+        return {
+            mode: 'replace',
+            components: arr
+        }
+    }
+        
+    createComponent(component, data) {
+        return createComponent(component, this, data, this._renderer);
+    }
+
+    init() {
+
+    }
+
+    render() {
+    }
+
+    updateState(state) {
+        if (!state)
+            return;
+        
+        const renderer = this.getRenderer();
+        
+        if (!renderer)
+            return;
+
+
+        this._needsUpdate = true;
+        
+        renderer.needsUpdate(this);
+
+        this.onStateUpdate(state);
+    }
+
+    needsUpdate() {
+        return this._needsUpdate;
+    }
+
+    onViewSwitch() {
+    }
+
+    onStateUpdate() {
+
+    }
+};
+
+
+class SmallNewsFeeds extends View {
+    constructor() {
+        this._feedRows = [];
+        this._lastRow  = null;
+
+        this._feedStream = [];
+    }
+
+    onStateUpdate(newFeeds) {
+        this._feedStream = newFeeds;
+    }
+
+    rowAddCells(row, rowIndex) {
+        for (let i = 0; i < FEEDS_PER_ROW; ++i) {
+            let index = rowIndex * FEEDS_PER_ROW + i; 
+            
+            if (index >= this._feedStream.length)
+                break;
+
+            const data = this._feedStream[index];
+
+            row.createComponent(SmallFeedCell, data);
+        }
+    }
+
+    render() {
+        if (!this._feedStream)
+            return this.keep();
+
+        let readingIndex = 0;
+
+        if (this._lastRow.length < FEEDS_PER_ROW)
+        {
+            const remainderElements = FEEDS_PER_ROW - this._lastRow.length;
+            for (let i = 0; i < remainderElements; ++i) {
+
+                if (i >= this._feedStream.length)
+                    break;
+
+                const data = this._feedStream[i];
+
+                this._lastRow.createComponent(SmallFeedCell, data);
+
+                ++readingIndex;
+            }
+        }
+
+        for (let i = readingIndex; i < this._feedStream.length; i += FEEDS_PER_ROW) {
+            const row = this.createComponent(SmallFeedRow);
+            
+            this.rowAddCells(row, i, this._feedStream);
+            this._feedRows.push(row);
+            
+            this._lastRow = row;
+        }
+
+        this._feedStream = null;
+
+        // new feeds here.
+        return this.append(rows);
+    }
+}
+
+
+class FeedNewsView extends View {
+    constructor() {
+        super();
+
+        this._feedsCursor = 0;
+
+        this._topFeedsComponent   = null;
+        this._smallFeedsComponent = null;
+    }
+
+    onViewCreated() {
+        this._topFeedsComponent   = this.createComponent(TopNewsFeeds);
+        this._smallFeedsComponent = this.createComponent(SmallNewsFeeds);
+    }
+
+
+    onStateUpdate(newFeeds) {
+        if (this._feedsCursor < 2)
+            this._topFeedsComponent.updateState(newFeeds);
+
+        this._smallFeedsComponent.updateState(newFeeds);
+
+        this._feedsCursor += newFeeds.length;
+    }
+    
+    render() {
+        return this.comp([
+            this._topFeedsComponent,
+            this._smallFeedsComponent
+        ]);
+    }
+
+    
+    // Exiting from this view, and showing another one.
+    onViewSwitch() {
+        
     }
 }
 
@@ -184,7 +374,7 @@ class DOMRenderer extends Module {
         if (this._currentView && this._currentView.name == view) {
             // just update data.
 
-            this._currentView.updateData(data);
+            this._currentView.updateState(data);
             return true;
         }
 
@@ -200,9 +390,7 @@ class DOMRenderer extends Module {
         this._currentView = this.getView(view);
 
         if (data !== null)
-            this._currentView.setData(data);
-
-        this._currentView.render();
+            this._currentView.updateState(data);
         
         return true; 
     }
@@ -387,6 +575,8 @@ const FeedsModel = [
     }
 ];
 
+
+const FEEDS_PER_ROW  = 4;
 
 const feeds = Feeder.create('news', 'feeder-view');
 feeds.load();
