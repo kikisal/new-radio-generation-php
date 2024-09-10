@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/controls/api/feeds-control.php';
 
 define("TIMESTAMP_CACHE_PATH", __DIR__ . "/mockup/timestamps.json");
+define('BAD_REQ_CODE', 1);
 
 
 //if ($_SERVER['REQUEST_METHOD'] != 'POST')
@@ -135,7 +136,14 @@ function reqReadBody() {
     return null;
 }
 
+session_start();
 
-$feeds = genRandomFeeds(43, $nameTable, $descTable);
+if (!isset($_SESSION['feed_timestamp']))
+    Utils\HTTPResponse::exitJson('INVALID_REQUEST', BAD_REQ_CODE);
+
+
+$feeds = genRandomFeeds(40, $nameTable, $descTable);
+
+usort($feeds, 'sortByTimestamp');
 
 echo     json_encode($feeds);

@@ -181,10 +181,12 @@ class DOMRenderer extends Module {
         if (this._stopFutherRendering)
             return false;
 
-        if (this._currentView && this._currentView.name == view)
-            return false;
+        if (this._currentView && this._currentView.name == view) {
+            // just update data.
 
-        // this._currentView.onClose();
+            this._currentView.updateData(data);
+            return true;
+        }
 
         if (!this.viewExists(view))
         {
@@ -192,12 +194,15 @@ class DOMRenderer extends Module {
             return false;
         }
 
-        
+        if (this._currentView)
+            this._currentView.onViewSwitch();
+
         this._currentView = this.getView(view);
 
         if (data !== null)
             this._currentView.setData(data);
-        
+
+        this._currentView.render();
         
         return true; 
     }
@@ -314,16 +319,19 @@ class Feeder extends Module {
     }
 
     async feeds() {
-        const newFeeds = await this.feed();
-        if (newFeeds.length > 0)
+        const newFeeds  = await this.nextFeeds();
+        let hasNewFeeds = false;
+        
+        if (newFeeds.length > 0) {
             this._feeds = this._feeds.concat(newFeeds);
-
-        console.log(this._feeds);
-        setTimeout((() => {
-            this.feeds();
-        }).bind(this), 3000);
+            hasNewFeeds = true;
+        }
 
         // render new feeds.
+        this._domRenderer.renderView("feeds-view", {
+            feeds: newFeeds,
+            hasNewFeeds
+        });
     }
 
     async nextFeeds() {
@@ -350,10 +358,6 @@ class Feeder extends Module {
         this._feeds            = [];
     }
 
-    get feeds() {
-        return this._feeds;
-    }
-    
     get type() {
         return this._type;
     }
