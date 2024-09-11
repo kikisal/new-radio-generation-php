@@ -158,6 +158,8 @@ class View {
             return;
 
         this.onStateUpdate(state);
+        // then render new changes.
+        this.getRenderer().renderComponent(this);
     }
 
     needsUpdate() {
@@ -421,6 +423,16 @@ class DOMRenderer extends Module {
         return true;
     }
 
+    updateViewState(v, data) {
+        if (!this.viewExists(v))
+            return false;
+
+        const view = this.getView(v);
+        view.updateState(data);
+
+        return true;
+    }
+
     getView(viewName) {
         return this._viewList.find((v) => {
             return v.getName() == viewName;
@@ -543,6 +555,10 @@ class Feeder extends Module {
             feeds: newFeeds,
             hasNewFeeds
         });
+
+        setTimeout((() => {
+            this._domRenderer.updateViewState("feeds-view", newFeeds);
+        }).bind(this), 5000);
     }
 
     async nextFeeds() {

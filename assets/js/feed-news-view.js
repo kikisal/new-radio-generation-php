@@ -59,7 +59,9 @@ class SmallNewsFeeds extends CustomComponent {
     }
     // to fix: Last feed rows are not filled with cells.
     render() {
-        
+
+        console.log(this._feedStream);
+
         if (!this._feedStream || this._feedStream.length < 1) {
             console.log('no feed stream.');
             return;
@@ -97,12 +99,9 @@ class SmallNewsFeeds extends CustomComponent {
             this._feedRows.push(row);
             
             this._lastRow = row;
-
         }
 
         this._feedStream = null;
-
-        console.log('final rows: ', this._feedRows);
 
         // new feeds here.
         this.append(rows);
@@ -134,8 +133,8 @@ class FeedNewsView extends CustomComponent {
 
 
     onStateUpdate(newFeeds) {
-        if (this._feedsCursor < 2)
-            this._topFeedsComponent.updateState(newFeeds);
+        //if (this._feedsCursor < 2)
+        //    this._topFeedsComponent.updateState(newFeeds);
 
         this._smallFeedsComponent.updateState(newFeeds);
 
@@ -143,6 +142,7 @@ class FeedNewsView extends CustomComponent {
     }
     
     render() {
+        console.log('rendering feed news view.');
         /*return this.comp([
             this._topFeedsComponent,
             this._smallFeedsComponent
