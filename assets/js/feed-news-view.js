@@ -18,13 +18,7 @@ class SmallFeedCell extends CustomComponent {
     }
 
     onViewCreated() {
-        this.setClassList(['news-cell'])
-
-        
-        setTimeout((() => {
-            console.log(this);
-            this.getRenderer().renderComponent(this);
-        }).bind(this), 5000);
+        this.setClassList(['news-cell']);
     }
 
     render() {
@@ -37,11 +31,13 @@ class SmallFeedCell extends CustomComponent {
 class SmallNewsFeeds extends CustomComponent {
     constructor() {
         super();
-        this._feedRows = [];
-        this._lastRow  = null;
+        this._feedRows      = [];
+        this._lastRow       = null;
 
-        this._feedStream = [2, 4, 1, 2, 4, 2, 4, 2, 4, 2, 3];
+
+        this._feedStream    = [2, 4, 1, 2, 4, 2, 4, 2, 4, 2, 3];
     }
+
 
     onStateUpdate(newFeeds) {
         this._feedStream = newFeeds;
@@ -49,7 +45,7 @@ class SmallNewsFeeds extends CustomComponent {
 
     rowAddCells(row, rowIndex) {
         for (let i = 0; i < FEEDS_PER_ROW; ++i) {
-            let index = rowIndex * FEEDS_PER_ROW + i; 
+            let index = rowIndex + i; 
             
             if (index >= this._feedStream.length)
                 break;
@@ -61,10 +57,8 @@ class SmallNewsFeeds extends CustomComponent {
             );
         }
     }
-
+    // to fix: Last feed rows are not filled with cells.
     render() {
-
-        this._feedRows = [];
         
         if (!this._feedStream || this._feedStream.length < 1) {
             console.log('no feed stream.');
@@ -76,6 +70,7 @@ class SmallNewsFeeds extends CustomComponent {
         if (this._lastRow && this._lastRow.length < FEEDS_PER_ROW)
         {
             const remainderElements = FEEDS_PER_ROW - this._lastRow.length;
+
             for (let i = 0; i < remainderElements; ++i) {
 
                 if (i >= this._feedStream.length)
@@ -91,13 +86,18 @@ class SmallNewsFeeds extends CustomComponent {
             }
         }
 
+        const rows = [];
+
         for (let i = readingIndex; i < this._feedStream.length; i += FEEDS_PER_ROW) {
             const row = this.createComponent(SmallFeedRow);
-            
+
             this.rowAddCells(row, i, this._feedStream);
+            
+            rows.push(row);
             this._feedRows.push(row);
             
             this._lastRow = row;
+
         }
 
         this._feedStream = null;
@@ -105,7 +105,7 @@ class SmallNewsFeeds extends CustomComponent {
         console.log('final rows: ', this._feedRows);
 
         // new feeds here.
-        this.append(this._feedRows);
+        this.append(rows);
     }
 }
 
@@ -114,7 +114,8 @@ class FeedNewsView extends CustomComponent {
     constructor() {
         super();
 
-        this._feedsCursor = 0;
+        this._feedsCursor   = 0;
+        this._scrollHeight  = 0;
 
         this._topFeedsComponent   = null;
         this._smallFeedsComponent = null;
@@ -122,9 +123,13 @@ class FeedNewsView extends CustomComponent {
 
     onViewCreated() {
         // this._topFeedsComponent   = this.createComponent(TopNewsFeeds);
-        // this._smallFeedsComponent = this.createComponent(SmallNewsFeeds);
-
+        this._smallFeedsComponent = this.createComponent(SmallNewsFeeds, null, ['small-news-feed']);
         
+    }
+
+    onComponentMounted() {
+        // DOM Elemeent has been updated, now use state variable scrollHeight to scroll back to the user previous position.
+         
     }
 
 
@@ -145,7 +150,7 @@ class FeedNewsView extends CustomComponent {
         */
         // this.createComponent(TopNewsFeeds);
         this.comp(
-            [this.createComponent(SmallNewsFeeds, null, ['small-news-feed'])]
+            [this._smallFeedsComponent]
         );
 
     }

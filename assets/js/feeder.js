@@ -101,6 +101,10 @@ class View {
         this._name        = null;
     }
 
+    onComponentMounted() {
+
+    }
+
     setClassList(classList) {
         if (!this.getViewElement())
             return;
@@ -365,13 +369,13 @@ class DOMRenderer extends Module {
 
         this._currentView = this.getView(view);
 
-        console.log('view exists: ', this._currentView);
 
         this.renderComponent(this._currentView);
         
         this._renderElement.innerHTML = '';
         this._renderElement.appendChild(this._currentView.getViewElement());
-
+        
+        this._currentView.onComponentMounted();
 
         /*
         if (data !== null)
@@ -394,6 +398,9 @@ class DOMRenderer extends Module {
         {    
             this.renderComponent(child);
             viewElement.appendChild(child.getViewElement());
+
+            child.onComponentMounted();
+
 
             if (child instanceof HTMLSpanComponent)
                 child.getViewElement().textContent = child.getTextContent();
