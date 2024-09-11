@@ -91,6 +91,15 @@ function createComponent(component, parent, data, renderer, classList) {
     return instance;
 }
 
+function compClassFromString(type) {
+    switch(type) {
+        case 'div':
+            return HTMLDivComponent;
+        default:
+            return null;
+    }
+}
+
 class View {
     constructor() {
         this._viewElement = null;
@@ -99,10 +108,50 @@ class View {
         this._children    = [];
         this._renderer    = null;
         this._name        = null;
+        this._props       = null;
     }
 
-    onComponentMounted() {
+    updatePropsData(props) {
+        this._props = props;
 
+        this.onPropsUpdated();
+    }
+
+    getProps() {
+        return this._props;
+    }
+
+
+    _domBuilder(parent, docObj) {
+        const compClass = compClassFromString(docObj.component);
+        if (!compClass)
+            return;
+
+
+        const comp = parent.createComponent(compClass, null, docObj.classList);
+        
+        parent.appendComponent(comp);
+
+        if ('children' in docObj && Array.isArray(docObj.children) && docObj.children.length > 0) {
+            for (const c of docObj.children) {
+                this._domBuilder(comp, c);
+            }
+        }
+
+        return comp;
+    }
+
+    markup_builder(docObj, append) {
+        const result = this._domBuilder(this, docObj);
+        
+        let arr = result;
+        if (docObj.extractAll)
+            arr = [...result.children()];
+
+        if (append)
+            return this.append(arr);
+        else
+            return this.comp(arr);       
     }
 
     setClassList(classList) {
@@ -157,9 +206,9 @@ class View {
         if (!state)
             return;
 
-        this.onStateUpdate(state);
+        if (this.onStateUpdate(state))
         // then render new changes.
-        this.getRenderer().renderComponent(this);
+            this.getRenderer().renderComponent(this);
     }
 
     needsUpdate() {
@@ -175,6 +224,14 @@ class View {
     }
 
     onViewCreated() {
+
+    }
+
+    onPropsUpdated() {
+
+    }
+
+    onComponentMounted() {
 
     }
 
@@ -348,7 +405,7 @@ class DOMRenderer extends Module {
      * @param {*} data if null, view doesn't update its state. 
      * @returns 
      */
-    renderView(view, data) {
+    renderView(view, propsData) {
 
         if (this._stopFutherRendering)
             return false;
@@ -356,7 +413,9 @@ class DOMRenderer extends Module {
         if (this._currentView && this._currentView.name == view) {
             // just update data.
 
-            this._currentView.updateState(data);
+            this._currentView.updatePropsData(propsData);
+            this.renderComponent(this._currentView);
+
             return true;
         }
 
@@ -371,7 +430,7 @@ class DOMRenderer extends Module {
 
         this._currentView = this.getView(view);
 
-
+        this._currentView.updatePropsData(propsData);
         this.renderComponent(this._currentView);
         
         this._renderElement.innerHTML = '';
@@ -379,11 +438,6 @@ class DOMRenderer extends Module {
         
         this._currentView.onComponentMounted();
 
-        /*
-        if (data !== null)
-            this._currentView.updateState(data);
-        */
-        
         return true; 
     }
 
@@ -555,10 +609,6 @@ class Feeder extends Module {
             feeds: newFeeds,
             hasNewFeeds
         });
-
-        setTimeout((() => {
-            this._domRenderer.updateViewState("feeds-view", newFeeds);
-        }).bind(this), 5000);
     }
 
     async nextFeeds() {
