@@ -66,9 +66,24 @@ async function http_fetch(req_desc) {
     }
 }
 
-function createComponent(component, parent, data, renderer) {
+function createComponent(component, parent, data, renderer, classList) {
     const instance  = new component(data);
     instance.parent = parent;
+
+    let domElement = null;
+
+    if (instance instanceof HTMLDivComponent || instance instanceof CustomComponent)
+        domElement = document.createElement('div');
+    else if (instance instanceof HTMLSpanComponent) {
+        domElement = document.createElement('span');
+        domElement.textContent = instance.getTextContent();
+    }
+
+    instance.setViewElement(domElement);
+
+    if (classList && domElement)
+        domElement.classList.add(...classList);
+
     instance.setRenderer(renderer);
 
     instance.onViewCreated();
@@ -78,41 +93,52 @@ function createComponent(component, parent, data, renderer) {
 
 class View {
     constructor() {
-        this._viewElement = document.createElement('div');
+        this._viewElement = null;
         this._needsUpdate = false;
         this._parent      = null;
         this._children    = [];
         this._renderer    = null;
+        this._name        = null;
     }
 
-    setRenderer(renderer) {
-        this._renderer = renderer;
+    setClassList(classList) {
+        if (!this.getViewElement())
+            return;
+
+        this.getViewElement().classList.add(...classList);
     }
+
+    hasChildren() {
+        return this._children.length > 0;
+    }
+
+    children() {
+        return this._children;
+    }
+
+    appendChild(child) {
+        this._viewElement.appendChild(child.getViewElement());
+    }
+
+    appendComponent(child) {
+        this._children.push(child);
+    }
+
 
     keep() {
-        return {
-            mode: 'keep'
-        };
+
     }
 
     append(components) {
         this._children = this._children.concat(components);
-
-        return {
-            mode: 'append',
-            components
-        };
     }
 
     comp(arr) {
-        return {
-            mode: 'replace',
-            components: arr
-        }
+        this._children = arr;
     }
         
-    createComponent(component, data) {
-        return createComponent(component, this, data, this._renderer);
+    createComponent(component, data, classList) {
+        return createComponent(component, this, data, this._renderer, classList);
     }
 
     init() {
@@ -120,21 +146,12 @@ class View {
     }
 
     render() {
+
     }
 
     updateState(state) {
         if (!state)
             return;
-        
-        const renderer = this.getRenderer();
-        
-        if (!renderer)
-            return;
-
-
-        this._needsUpdate = true;
-        
-        renderer.needsUpdate(this);
 
         this.onStateUpdate(state);
     }
@@ -144,114 +161,72 @@ class View {
     }
 
     onViewSwitch() {
+
     }
 
     onStateUpdate() {
 
     }
+
+    onViewCreated() {
+
+    }
+
+    getRenderer() {
+        return this._renderer;
+    }
+    
+    setName(name) {
+        this._name = name;
+    }
+
+    getName() {
+        return this._name;
+    }
+
+    getViewElement() {
+        return this._viewElement;
+    }
+
+    setViewElement(viewElement) {
+        this._viewElement = viewElement;
+    }
+
+    setRenderer(renderer) {
+        this._renderer = renderer;
+    }
 };
 
-
-class SmallNewsFeeds extends View {
+class CustomComponent extends View {
     constructor() {
-        this._feedRows = [];
-        this._lastRow  = null;
-
-        this._feedStream = [];
-    }
-
-    onStateUpdate(newFeeds) {
-        this._feedStream = newFeeds;
-    }
-
-    rowAddCells(row, rowIndex) {
-        for (let i = 0; i < FEEDS_PER_ROW; ++i) {
-            let index = rowIndex * FEEDS_PER_ROW + i; 
-            
-            if (index >= this._feedStream.length)
-                break;
-
-            const data = this._feedStream[index];
-
-            row.createComponent(SmallFeedCell, data);
-        }
-    }
-
-    render() {
-        if (!this._feedStream)
-            return this.keep();
-
-        let readingIndex = 0;
-
-        if (this._lastRow.length < FEEDS_PER_ROW)
-        {
-            const remainderElements = FEEDS_PER_ROW - this._lastRow.length;
-            for (let i = 0; i < remainderElements; ++i) {
-
-                if (i >= this._feedStream.length)
-                    break;
-
-                const data = this._feedStream[i];
-
-                this._lastRow.createComponent(SmallFeedCell, data);
-
-                ++readingIndex;
-            }
-        }
-
-        for (let i = readingIndex; i < this._feedStream.length; i += FEEDS_PER_ROW) {
-            const row = this.createComponent(SmallFeedRow);
-            
-            this.rowAddCells(row, i, this._feedStream);
-            this._feedRows.push(row);
-            
-            this._lastRow = row;
-        }
-
-        this._feedStream = null;
-
-        // new feeds here.
-        return this.append(rows);
+        super();
     }
 }
 
 
-class FeedNewsView extends View {
+// stock components
+class HTMLDivComponent extends View {
     constructor() {
         super();
-
-        this._feedsCursor = 0;
-
-        this._topFeedsComponent   = null;
-        this._smallFeedsComponent = null;
     }
 
-    onViewCreated() {
-        this._topFeedsComponent   = this.createComponent(TopNewsFeeds);
-        this._smallFeedsComponent = this.createComponent(SmallNewsFeeds);
-    }
-
-
-    onStateUpdate(newFeeds) {
-        if (this._feedsCursor < 2)
-            this._topFeedsComponent.updateState(newFeeds);
-
-        this._smallFeedsComponent.updateState(newFeeds);
-
-        this._feedsCursor += newFeeds.length;
-    }
-    
     render() {
-        return this.comp([
-            this._topFeedsComponent,
-            this._smallFeedsComponent
-        ]);
+
+    }
+}
+
+class HTMLSpanComponent extends View {
+    constructor(text) {
+        super();
+        this._textContent = text;
     }
 
-    
-    // Exiting from this view, and showing another one.
-    onViewSwitch() {
-        
+    getTextContent() {
+        return this._textContent;
+    }
+
+    render() {
+
     }
 }
 
@@ -329,6 +304,7 @@ class Debugger {
     }
 }
 
+
 // implements stateful views manager
 class DOMRenderer extends Module {
     constructor(query) {
@@ -380,7 +356,7 @@ class DOMRenderer extends Module {
 
         if (!this.viewExists(view))
         {
-            this._debugger.log('Trying to render a view that does not exist.');
+            this._debugger.log(`Trying to render a view (${view}) that does not exist.`);
             return false;
         }
 
@@ -389,14 +365,43 @@ class DOMRenderer extends Module {
 
         this._currentView = this.getView(view);
 
+        console.log('view exists: ', this._currentView);
+
+        this.renderComponent(this._currentView);
+        
+        this._renderElement.innerHTML = '';
+        this._renderElement.appendChild(this._currentView.getViewElement());
+
+
+        /*
         if (data !== null)
             this._currentView.updateState(data);
+        */
         
         return true; 
     }
 
+    renderComponent(c) {
+        const viewElement = c.getViewElement();
+        viewElement.innerHTML = '';
+
+        c.render();
+
+        if (!c.children())
+            return;
+
+        for (const child of c.children())
+        {    
+            this.renderComponent(child);
+            viewElement.appendChild(child.getViewElement());
+
+            if (child instanceof HTMLSpanComponent)
+                child.getViewElement().textContent = child.getTextContent();
+        }
+    }
+
     viewExists(view) {
-        return this._viewList.includes(view);
+        return !!this.getView(view);
     }
 
     updateViewData(v, data) {
@@ -411,8 +416,16 @@ class DOMRenderer extends Module {
 
     getView(viewName) {
         return this._viewList.find((v) => {
-            return v.name == viewName;
+            return v.getName() == viewName;
         });
+    }
+
+    addView(view, viewClass) {
+        const instance = createComponent(viewClass, null, null, this, null);
+        
+        instance.setName(view);
+        
+        this._viewList.push(instance);
     }
 }
 
@@ -449,6 +462,10 @@ class Feeder extends Module {
         this._debugger.registerListener(this);
     }
 
+    getRenderer() {
+        return this._domRenderer;
+    }
+
     onDebugLog(message) {
         this._domRenderer.renderView('error-view', {
             message: message
@@ -482,7 +499,6 @@ class Feeder extends Module {
                 '', 
                 this._retryAttemps < Feeder.MAX_RETRYING_ATTEMPS
             ); 
-            
             
             this._debugger.log(`Couldn't load feeds${retryingText}`);
 
@@ -564,20 +580,4 @@ function domSelect(query) {
 }
 
 
-const FeedsModel = [
-    {
-        key: 'timestamp',
-        type: 'number'
-    },
-    {
-        key: 'feeds',
-        type: 'object'
-    }
-];
-
-
-const FEEDS_PER_ROW  = 4;
-
-const feeds = Feeder.create('news', 'feeder-view');
-feeds.load();
 
