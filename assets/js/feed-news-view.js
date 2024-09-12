@@ -103,7 +103,6 @@ class BigFeedCell extends CustomComponent {
         </div>
     */
     render() {
-        
 
         return this.markup_builder({
             component: 'div',

@@ -311,7 +311,7 @@ class CustomComponent extends View {
     }
 }
 
-// stock components
+// --- stock components ---
 class HTMLDivComponent extends View {
     constructor() {
         super();
@@ -349,6 +349,18 @@ class HTMLSpanComponent extends View {
 
     render() {
 
+    }
+}
+
+// --- end stock components ---
+
+class StackTraceView extends CustomComponent {
+    constructor() {
+        super();
+    }
+
+    onPropsUpdated() {
+        this.setTextContent(this.getProps().message);
     }
 }
 
@@ -437,12 +449,15 @@ class DOMRenderer extends Module {
         this._currentView         = null;
         this._viewList            = [];
         this._debugger            = Debugger.createDebugger(this);
+ 
 
         // this is used to ensure other modules do not override what's currently being rendered
         // on the _renderElement.
         this._stopFutherRendering = false;
 
         this._debugger.registerListener(this);
+
+        this.addView('stack-trace-view', StackTraceView);
     }
 
     onDebugLog(message) {
@@ -469,35 +484,46 @@ class DOMRenderer extends Module {
         if (this._stopFutherRendering)
             return false;
 
-        if (this._currentView && this._currentView.name == view) {
-            // just update data.
+        try {
+            
+            if (this._currentView && this._currentView.name == view) {
+                // just update data.
+
+                this._currentView.updatePropsData(propsData);
+                this.renderComponent(this._currentView);
+
+                return true;
+            }
+
+            if (!this.viewExists(view))
+            {
+                this._debugger.log(`Trying to render a view (${view}) that does not exist.`);
+                return false;
+            }
+
+            if (this._currentView)
+                this._currentView.onViewSwitch();
+
+            this._currentView = this.getView(view);
 
             this._currentView.updatePropsData(propsData);
             this.renderComponent(this._currentView);
+            
+            this._renderElement.innerHTML = '';
+            this._renderElement.appendChild(this._currentView.getViewElement());
+            
+            this._currentView.onComponentMounted();
 
-            return true;
+            return true; 
+        } catch(exception) {
+            
+            if (view == 'stack-trace-view')
+                throw new Error('stack-trace-view couln\t render: ', exception); // to avoid possible infinite recursion
+
+            this._debugger.log(`Uncaught Exception: ${exception}`);
         }
 
-        if (!this.viewExists(view))
-        {
-            this._debugger.log(`Trying to render a view (${view}) that does not exist.`);
-            return false;
-        }
-
-        if (this._currentView)
-            this._currentView.onViewSwitch();
-
-        this._currentView = this.getView(view);
-
-        this._currentView.updatePropsData(propsData);
-        this.renderComponent(this._currentView);
-        
-        this._renderElement.innerHTML = '';
-        this._renderElement.appendChild(this._currentView.getViewElement());
-        
-        this._currentView.onComponentMounted();
-
-        return true; 
+        return false;
     }
 
     renderComponent(c) {
@@ -513,15 +539,15 @@ class DOMRenderer extends Module {
         {    
             this.renderComponent(child);
             viewElement.appendChild(child.getViewElement());
-
-            child.onComponentMounted();
-
-            if (child instanceof HTMLSpanComponent || child.innerText !== null)
-                child.getViewElement().textContent = child.getTextContent();
-
-            if (child instanceof HTMLImageComponent)
-                child.getViewElement().src = child.src;
         }
+
+        c.onComponentMounted();
+
+        if (c instanceof HTMLSpanComponent || c.innerText !== null)
+            c.getViewElement().textContent = c.getTextContent();
+
+        if (c instanceof HTMLImageComponent)
+            c.getViewElement().src = c.src;
     }
 
     viewExists(view) {
