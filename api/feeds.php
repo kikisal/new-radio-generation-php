@@ -51,6 +51,7 @@ function sample_timestamps($count) {
 
     $time = time();
 
+
     for ($i=0; $i < $count; $i++)
         $result[] = $time + $i * 60;
 

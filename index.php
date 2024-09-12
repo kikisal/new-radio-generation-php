@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
     <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/style.css?cache=<?= time() ?>" />
+    <script src="assets/js/date-formatter.js?<?= time(); ?>"></script>
     <script src="assets/js/feeder.js?v=<?= time(); ?>"></script>
     <script src="assets/js/feed-news-view.js?v=<?=time();?>"></script>
 </head>
@@ -102,9 +103,9 @@
                     <h1>Feed notizie</h1>
                     <div class="line-separator"></div>
                     <feeder-view>
-                        <div class="news-list dflex row-dir">
+                        <div class="news-list initial-display dflex row-dir">
                             
-                            <div class="news-item flex-shrink-0 grow br-3">
+                            <div class="news-item flex-shrink-0 grow br-3 --ni">
                                 <div class="news-image-place"></div>
                                 <div class="text-container initial-display">
                                     <div class="text-title-place"></div>
@@ -112,7 +113,7 @@
                                     <div class="text-date-place"></div>
                                 </div>
                             </div>
-                            <div class="news-item flex-shrink-0 grow br-3">
+                            <div class="news-item flex-shrink-0 grow br-3 --ni">
                                 <div class="news-image-place"></div>
                                 <div class="text-container initial-display">
                                     <div class="text-title-place"></div>
@@ -122,8 +123,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="news-list dflex row-dir small-news">
-                                <div class="news-item-small pr-3">
+                            <div class="news-list dflex row-dir small-news initial-display">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -132,7 +133,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -141,7 +142,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -150,7 +151,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -161,8 +162,8 @@
                                 </div>
                             </div>
                             <div class="v-separator-even-3"></div>
-                            <div class="news-list dflex row-dir small-news">
-                                <div class="news-item-small pr-3">
+                            <div class="news-list dflex row-dir small-news initial-display">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -171,7 +172,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -180,7 +181,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -189,7 +190,7 @@
                                         <div class="text-date-place"></div>
                                     </div>
                                 </div>
-                                <div class="news-item-small pr-3">
+                                <div class="news-item-small pr-3 --ni">
                                     <div class="news-image"></div>
                                     <div class="text-container">
                                         <div class="text-title-place"></div>
@@ -255,10 +256,16 @@
         </div>
     </div>
     <script>
-        let over = document.getElementById("over");
-        over.addEventListener("click", () => {
-            over.classList.remove("show");
-        });
+
+        (() => {
+            const items = document.querySelectorAll('.news-list.initial-display .--ni');
+            const k     = .1;
+
+            items.forEach((item, index) => {
+                const delay = index * k;
+                item.style.animationDelay = `${delay}s`;
+            }); 
+        })();
 
         const FeedsModel = [
             {
@@ -275,7 +282,9 @@
         (() => {
             const feeder = Feeder.create('news', 'feeder-view');
             feeder.getRenderer().addView("feeds-view", FeedNewsView);
-            feeder.load();
+            setTimeout(() => {
+                feeder.load();
+            }, 2000);
         })();
     </script>
 </body>

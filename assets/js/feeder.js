@@ -1,4 +1,7 @@
-
+/**
+ * @author weeki - github: https://github.com/kikisal
+ * for any bugs, report it here: https://github.com/kikisal/new-radio-generation-php/issues 
+ */
 const DEBUG_MODE = true;
 
 
@@ -72,11 +75,14 @@ function createComponent(component, parent, data, renderer, classList) {
 
     let domElement = null;
 
+    // -- temporary code --
     if (instance instanceof HTMLDivComponent || instance instanceof CustomComponent)
         domElement = document.createElement('div');
     else if (instance instanceof HTMLSpanComponent) {
         domElement = document.createElement('span');
         domElement.textContent = instance.getTextContent();
+    } else if (instance instanceof HTMLImageComponent) {
+        domElement = document.createElement('img');
     }
 
     instance.setViewElement(domElement);
@@ -95,6 +101,8 @@ function compClassFromString(type) {
     switch(type) {
         case 'div':
             return HTMLDivComponent;
+        case 'img':
+            return HTMLImageComponent;
         default:
             return null;
     }
@@ -112,6 +120,19 @@ class View {
 
         this._innerText   = null;
     }
+
+    putInBetween(components, docObj) {
+
+        let result = [];
+        for (const _c of components) {
+            result.push(_c);
+            result = result.concat(this.markup_builder(docObj, false, true));
+        }
+
+
+        return result;
+    }
+
 
     get innerText() {
         return this._innerText;
@@ -141,9 +162,11 @@ class View {
         if (!compClass)
             return;
 
-
         const comp = parent.createComponent(compClass, null, docObj.classList);
         
+        if  (comp instanceof HTMLImageComponent)
+            comp.src = docObj.src;
+
         parent.appendComponent(comp);
         
         if ('textContent' in docObj)
@@ -158,12 +181,15 @@ class View {
         return comp;
     }
 
-    markup_builder(docObj, append) {
+    markup_builder(docObj, append, keepChildren) {
         const result = this._domBuilder(this, docObj);
         
         let arr = result;
         if (docObj.extractAll)
             arr = [...result.children()];
+
+        if (keepChildren)
+            return arr;
 
         if (append)
             return this.append(arr);
@@ -201,10 +227,12 @@ class View {
 
     append(components) {
         this._children = this._children.concat(components);
+        return this;
     }
 
     comp(arr) {
         this._children = arr;
+        return this;
     }
         
     createComponent(component, data, classList) {
@@ -283,11 +311,29 @@ class CustomComponent extends View {
     }
 }
 
-
 // stock components
 class HTMLDivComponent extends View {
     constructor() {
         super();
+    }
+
+    render() {
+
+    }
+}
+
+class HTMLImageComponent extends View {
+    constructor() {
+        super();
+        this._src = null;
+    }
+
+    get src() {
+        return this._src;
+    }
+
+    set src(source) {
+        this._src = source;
     }
 
     render() {
@@ -472,6 +518,9 @@ class DOMRenderer extends Module {
 
             if (child instanceof HTMLSpanComponent || child.innerText !== null)
                 child.getViewElement().textContent = child.getTextContent();
+
+            if (child instanceof HTMLImageComponent)
+                child.getViewElement().src = child.src;
         }
     }
 

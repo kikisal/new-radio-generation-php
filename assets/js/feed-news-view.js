@@ -2,6 +2,8 @@
 
 const FEEDS_PER_ROW  = 4;
 
+_globalCacheIndex = 0;
+
 
 class SmallFeedRow extends CustomComponent {
     constructor() {
@@ -44,7 +46,13 @@ class SmallFeedCell extends CustomComponent {
             children: [
                 {
                     component: 'div',
-                    classList: ['news-image']
+                    classList: ['news-image'],
+                    children: [
+                        {
+                            component: 'img',
+                            src: this.getPostData().image_url + `?c=${++_globalCacheIndex}`
+                        }
+                    ]
                 },
                 {
                     component: 'div',
@@ -52,7 +60,7 @@ class SmallFeedCell extends CustomComponent {
                     children: [
                         {
                             component: 'div',
-                            classList: ['text-title-place'],
+                            classList: ['text-title'],
                             textContent: this.getPostData().name
                         },
                         {
@@ -61,7 +69,8 @@ class SmallFeedCell extends CustomComponent {
                         },
                         {
                             component: 'div',
-                            classList: ['text-date-place']
+                            classList: ['text-date'],
+                            textContent: new Date(this.getPostData().timestamp * 1000).format('d, D F Y - H:i')
                         }
                     ]
                 }
@@ -94,13 +103,21 @@ class BigFeedCell extends CustomComponent {
         </div>
     */
     render() {
+        
+
         return this.markup_builder({
             component: 'div',
             extractAll: true,
             children: [
                 {
                     component: 'div',
-                    classList: ['news-image-place']
+                    classList: ['news-image'],
+                    children: [
+                        {
+                            component: 'img',
+                            src: this.getPostData().image_url + `?c=${++_globalCacheIndex}`
+                        }
+                    ]
                 },
                 {
                     component: 'div',
@@ -108,7 +125,7 @@ class BigFeedCell extends CustomComponent {
                     children: [
                         {
                             component: 'div',
-                            classList: ['text-title-place'],
+                            classList: ['text-title'],
                             textContent: this.getPostData().name
                         },
                         {
@@ -117,7 +134,8 @@ class BigFeedCell extends CustomComponent {
                         },
                         {
                             component: 'div',
-                            classList: ['text-date-place']
+                            classList: ['text-date'],
+                            textContent: new Date(this.getPostData().timestamp * 1000).format('d, D F Y - H:i')
                         }
                     ]
                 }
@@ -216,7 +234,11 @@ class RowStreamComponent extends CustomComponent {
         this._streamData = null;
 
         // new feeds here.
-        this.append(rows);
+        // <div class="v-separator-even-3"></div>
+        this.append(this.putInBetween(rows, {
+            component: 'div',
+            classList: ['v-separator-even-3']
+        }));
     }
 }
 

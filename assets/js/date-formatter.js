@@ -8,6 +8,7 @@ Author: Steven Hoyt
 if (!Date.prototype.format) {
     Date.prototype.format = function(format) {
         if (isNaN(this.valueOf()) || !this.valueOf()) { return null; }
+        
 
         const days        = ["SUN", "MON", "TUE", "WED", "THR", "FRI", "SAT"];
         const months      = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
