@@ -57,10 +57,11 @@ async function http_fetch(req_desc) {
 
         const data = await res.json();
 
-        if (!JSONValidator.validate(data, FeedsModel) && false) {
+        /*if (!JSONValidator.validate(data, FeedsModel) && false) {
             console.warn(`Error while loading feeds: Invalid returned data. `, data);
             return null;
         }
+        */
 
         return data;
     } catch(err) {

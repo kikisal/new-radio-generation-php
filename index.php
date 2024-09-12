@@ -234,6 +234,7 @@
                 -->
             </div>
         </div>
+        <div class="flex-grow"></div>
         <div class="footer">
             <!--
             <div class="footer-big-section">
@@ -267,18 +268,6 @@
             }); 
         })();
 
-        const FeedsModel = [
-            {
-            key: 'timestamp',
-            type: 'number'
-            },
-            {
-            key: 'feeds',
-            type: 'object'
-            }
-        ];
-
-        
         (() => {
             const feeder = Feeder.create('news', 'feeder-view');
             feeder.getRenderer().addView("feeds-view", FeedNewsView);
