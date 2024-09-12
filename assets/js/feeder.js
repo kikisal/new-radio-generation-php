@@ -109,6 +109,20 @@ class View {
         this._renderer    = null;
         this._name        = null;
         this._props       = null;
+
+        this._innerText   = null;
+    }
+
+    get innerText() {
+        return this._innerText;
+    }
+
+    setTextContent(text) {
+        this._innerText = text;
+    }
+    
+    getTextContent() {
+        return this.innerText;
     }
 
     updatePropsData(props) {
@@ -131,6 +145,9 @@ class View {
         const comp = parent.createComponent(compClass, null, docObj.classList);
         
         parent.appendComponent(comp);
+        
+        if ('textContent' in docObj)
+            comp.setTextContent(docObj.textContent);
 
         if ('children' in docObj && Array.isArray(docObj.children) && docObj.children.length > 0) {
             for (const c of docObj.children) {
@@ -281,11 +298,7 @@ class HTMLDivComponent extends View {
 class HTMLSpanComponent extends View {
     constructor(text) {
         super();
-        this._textContent = text;
-    }
-
-    getTextContent() {
-        return this._textContent;
+        this._innerText = text;
     }
 
     render() {
@@ -457,8 +470,7 @@ class DOMRenderer extends Module {
 
             child.onComponentMounted();
 
-
-            if (child instanceof HTMLSpanComponent)
+            if (child instanceof HTMLSpanComponent || child.innerText !== null)
                 child.getViewElement().textContent = child.getTextContent();
         }
     }

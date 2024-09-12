@@ -52,7 +52,8 @@ class SmallFeedCell extends CustomComponent {
                     children: [
                         {
                             component: 'div',
-                            classList: ['text-title-place']
+                            classList: ['text-title-place'],
+                            textContent: this.getPostData().name
                         },
                         {
                             component: 'div',
@@ -107,7 +108,8 @@ class BigFeedCell extends CustomComponent {
                     children: [
                         {
                             component: 'div',
-                            classList: ['text-title-place']
+                            classList: ['text-title-place'],
+                            textContent: this.getPostData().name
                         },
                         {
                             component: 'div',
@@ -277,18 +279,13 @@ class FeedNewsView extends CustomComponent {
         this._smallFeedsComponent = null;
     }
 
-    /*
-
-        this._feedsPerRow   = typeof data.feedsPerRow == 'undefined' ? RowDividerComponent.DEFAULT_FEEDS_PER_ROW : feedsPerRow; 
-        this._rowComponent  = data.rowComponent;
-        this._cellComponent = data.cellComponent;
-    */
     onViewCreated() {
         this._topFeedsComponent   = this.createComponent(TopNewsFeeds, {
             feedsPerRow:   TopNewsFeeds.FEEDS_PER_ROW,
             rowComponent:  SmallFeedRow,
             cellComponent: BigFeedCell
         }, null);
+
         this._smallFeedsComponent = this.createComponent(SmallNewsFeeds, {
             feedsPerRow:   FEEDS_PER_ROW,
             rowComponent:  SmallFeedRow,
