@@ -191,10 +191,8 @@ class RowStreamComponent extends CustomComponent {
     // to fix: Last feed rows are not filled with cells.
     render() {
 
-        if (!this._streamData || this._streamData.length < 1) {
-            console.log('no feed stream.');
+        if (!this._streamData || this._streamData.length < 1)
             return;
-        }
 
         let readingIndex = 0;
 

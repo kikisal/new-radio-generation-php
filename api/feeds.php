@@ -148,3 +148,5 @@ $feeds = genRandomFeeds(40, $nameTable, $descTable);
 usort($feeds, 'sortByTimestamp');
 
 echo     json_encode($feeds);
+//echo json_encode([]);
+

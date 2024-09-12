@@ -57,7 +57,8 @@ async function http_fetch(req_desc) {
 
         const data = await res.json();
 
-        /*if (!JSONValidator.validate(data, FeedsModel) && false) {
+        /*
+        if (!JSONValidator.validate(data, FeedsModel) && false) {
             console.warn(`Error while loading feeds: Invalid returned data. `, data);
             return null;
         }
@@ -119,7 +120,24 @@ class View {
         this._name        = null;
         this._props       = null;
 
+        this._renderMode  = 'replace';
+        
+        this._appendLength = 0; 
+        this._appendIndex  = 0;
+
         this._innerText   = null;
+    }
+
+    get renderMode() {
+        return this._renderMode;
+    }
+
+    get appendIndex() {
+        return this._appendIndex;
+    }
+
+    get appendLength() {
+        return this._appendLength;
     }
 
     putInBetween(components, docObj) {
@@ -219,6 +237,7 @@ class View {
 
     appendComponent(child) {
         this._children.push(child);
+        ++this._appendLength;
     }
 
 
@@ -227,12 +246,15 @@ class View {
     }
 
     append(components) {
-        this._children = this._children.concat(components);
+        this._renderMode   = 'append';
+        this._children     = this._children.concat(components);
+        this._appendLength += components.length;
         return this;
     }
 
     comp(arr) {
-        this._children = arr;
+        this._renderMode  = 'replace';
+        this._children    = arr;
         return this;
     }
         
@@ -529,14 +551,25 @@ class DOMRenderer extends Module {
 
     renderComponent(c) {
         const viewElement = c.getViewElement();
-        viewElement.innerHTML = '';
+
+        if (c.renderMode == 'replace')
+            viewElement.innerHTML = '';
 
         c.render();
 
         if (!c.children())
             return;
 
-        for (const child of c.children())
+
+        let children = c.children();
+
+        if (c.renderMode == 'append') {
+            children = children.slice(c.appendIndex, (c.appendIndex + c.appendLength));
+            c._appendIndex += c.appendLength;
+            c._appendLength = 0;
+        }
+
+        for (const child of children)
         {    
             this.renderComponent(child);
             viewElement.appendChild(child.getViewElement());
@@ -618,9 +651,62 @@ class Feeder extends Module {
 
         this._feeds            = [];
         this._initialTimestamp = -1;
+        
+        this._loaded           = false;
 
+
+        this._lastScrollPos    = undefined;
+        this._lastScrolledTime = undefined;
+        this._scrollTreshold   = 200;
+
+        this._scrolledBottom   = false;
+        this._scrollWatcher    = setInterval((() => {
+            const el = document.querySelector('html');
+            const scrollPos = el.scrollHeight - el.clientHeight - el.scrollTop;
+
+            if (Math.abs(scrollPos) < this._scrollTreshold && !this._scrolledBottom) {
+                this._scrolledBottom = true;
+                this.onScrollBottom();
+            }
+        }).bind(this), 1000);
+
+        window.addEventListener('scroll', this.onScrollChange.bind(this));
 
         this._debugger.registerListener(this);
+    }
+
+    onScrollChange() {
+        const el = document.querySelector('html');
+
+        const scrollPos = el.scrollHeight - el.clientHeight - el.scrollTop;
+        if (!this._lastScrollPos)
+            this._lastScrollPos = scrollPos;
+
+        const diff = scrollPos - this._lastScrollPos;
+        this._lastScrollPos = scrollPos;
+
+
+        if (Math.abs(scrollPos) < this._scrollTreshold && !this._scrolledBottom && Math.sign(diff) < 0)
+        {
+            this._currentScrolledTime = Date.now();
+
+            if (!this._lastScrolledTime)
+                this._lastScrolledTime = this._currentScrolledTime;
+
+            const ellapsed          = this._currentScrolledTime - this._lastScrolledTime;
+            this._lastScrolledTime  = this._currentScrolledTime;
+            
+            if (ellapsed < 200)
+                return;
+
+            this._scrolledBottom = true;
+            this.onScrollBottom();
+        }
+        
+    }
+
+    onScrollBottom() {
+        this.feeds();
     }
 
     getRenderer() {
@@ -663,8 +749,10 @@ class Feeder extends Module {
             
             this._debugger.log(`Couldn't load feeds${retryingText}`);
 
-            if (this._retryAttemps >= Feeder.MAX_RETRYING_ATTEMPS)
+            if (this._retryAttemps >= Feeder.MAX_RETRYING_ATTEMPS) {
+                this._scrolledBottom = false; // ENABLE SCROLLING AGAIN
                 return false;
+            }
 
             this._scheduler.schedule((() => {
                 ++this._retryAttemps;
@@ -677,6 +765,7 @@ class Feeder extends Module {
 
         this._retryAttemps = 0;
         this._currentChunk = 0;
+        this._loaded       = true;
 
         this.feeds();
 
@@ -684,6 +773,9 @@ class Feeder extends Module {
     }
 
     async feeds() {
+        if (!this._loaded)
+            return;
+
         const newFeeds  = await this.nextFeeds();
         let hasNewFeeds = false;
         
@@ -697,6 +789,8 @@ class Feeder extends Module {
             feeds: newFeeds,
             hasNewFeeds
         });
+
+        this._scrolledBottom = false; // ENABLE SCROLLING AGAIN
     }
 
     async nextFeeds() {
