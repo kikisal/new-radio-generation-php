@@ -3,6 +3,10 @@
     --neutral-color: 12 12 12;
 }
 
+* {
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+}
+
 html {
     height: 100%;
 }
@@ -237,6 +241,7 @@ a {
     font-weight: 500;
     text-transform: uppercase;
     outline: none;
+    text-wrap: nowrap;
 }
 
 nav .item:not(.active):hover {
@@ -646,10 +651,10 @@ h1 {
 }
 
 @media screen and (max-width: 1080px) {
-
     .logo-text {
         display: none;
     }
+
     .follow-us-wrapper {
         display: none;
     }
@@ -659,8 +664,49 @@ h1 {
     }
 
     .main-content {
-        width: 100%!important;
-
-        
+        width: 100%!important;    
     }
+
+    .news-item-small {
+        width: 50%;
+        flex-shrink: 0;
+    }
+
+    .news-list.small-news {
+        flex-wrap: wrap;
+    }
+}
+
+* {
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+}
+
+@media screen and (max-width: 600px) {
+    .news-item-small {
+        width: 100%;
+    }
+}
+.nav-bar {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.nav-bar::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+
+/* Track */
+.nav-bar::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+/* Handle */
+.nav-bar::-webkit-scrollbar-thumb {
+    background: #b5b5b5; 
+}
+
+/* Handle on hover */
+.nav-bar::-webkit-scrollbar-thumb:hover {
+    background: #555; 
 }

@@ -834,8 +834,8 @@ class OneTimeScrollWatcher extends Module {
 
 class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
 
-    static FEEDER_ENDPOINT                = 'http://localhost/api/feeds';
-    static FEEDER_CREATE_SESSION_ENDPOINT = 'http://localhost/api/fcs';
+    static FEEDER_ENDPOINT                = 'http://192.168.1.172//api/feeds';
+    static FEEDER_CREATE_SESSION_ENDPOINT = 'http://192.168.1.172//api/fcs';
     static RETRY_FEED_TIMEOUT             = 5000; // 5sec
     static MAX_RETRYING_ATTEMPS           = 10;
 
