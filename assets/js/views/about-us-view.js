@@ -65,12 +65,12 @@
 
     const ABOUT_US_HTML = `<section>
                         <h2>La nostra storia</h2>
-                        <p>Siamo un team di esperti nel campo dell'informatica, con anni di esperienza nel fornire soluzioni software innovative ai nostri clienti. La nostra azienda è stata fondata nel 2005 con l'obiettivo di rivoluzionare il modo in cui le persone interagiscono con la tecnologia.</p>
+                        <p>Siamo un team di DJ professionisti, uniti dalla passione per la musica e dalla voglia di far vivere emozioni uniche attraverso i nostri set. Dal 2005, ci siamo affermati sulla scena musicale portando suoni innovativi e mix coinvolgenti che trasformano ogni evento in un'esperienza indimenticabile.</p>
                     </section>
             
                     <section>
                         <h2>La nostra missione</h2>
-                        <p>La nostra missione è quella di creare prodotti e servizi che semplifichino la vita delle persone e migliorino la loro produttività. Ci impegniamo a fornire soluzioni di alta qualità che soddisfino le esigenze specifiche dei nostri clienti.</p>
+                        <p>La nostra missione è far vibrare il pubblico con selezioni musicali curate e mix energici. Ci impegniamo a creare atmosfere che ispirino e facciano ballare, portando la nostra arte a nuovi livelli in ogni performance. Lavoriamo per soddisfare le esigenze dei nostri clienti, offrendo serate personalizzate che rispecchiano il loro stile e la loro visione. </p>
                     </section>`;
     
 })(window);
