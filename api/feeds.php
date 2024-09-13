@@ -1,6 +1,10 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/controls/api/feeds-control.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 define("TIMESTAMP_CACHE_PATH", __DIR__ . "/mockup/timestamps.json");
 define('BAD_REQ_CODE', 1);
 
@@ -147,7 +151,7 @@ $feeds = genRandomFeeds(40, $nameTable, $descTable);
 
 usort($feeds, 'sortByTimestamp');
 
-sleep(2);
+//sleep(2);
 
 echo     json_encode($feeds);
 

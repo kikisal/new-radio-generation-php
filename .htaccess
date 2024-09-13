@@ -1,3 +1,11 @@
 RewriteEngine On
+
+# For any /api/* links, rewrite to /api/whateverpage.php
+RewriteCond %{DOCUMENT_ROOT}/api/$1.php -f
+RewriteRule ^api/(.*)$ /api/$1.php [L]
+
+# For all other links except for existing files
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^\.]+)$ $1.php [L]
+RewriteCond %{REQUEST_URI} !^/api/
+
+RewriteRule ^([^\.]+)$ index.php/$1.php [L]

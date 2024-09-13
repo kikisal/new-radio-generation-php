@@ -1,6 +1,8 @@
 (function(history){
     var pushState = history.pushState;
+
     history.pushState = function(state) {
+        console.log('on push state.');
         if (typeof history.onpushstate == "function") {
             history.onpushstate({state: state});
         }

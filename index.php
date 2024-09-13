@@ -9,52 +9,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
     <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/style.css?cache=<?= time() ?>" />
+    <link rel="stylesheet" href="/assets/about-us.css" />
+    
     <script src="assets/js/date-formatter.js?<?= time(); ?>"></script>
     <script src="assets/js/feeder.js?v=<?= time(); ?>"></script>
-    <script src="assets/js/feed-news-view.js?v=<?=time();?>"></script>
+    <script src="assets/js/views/feed-news-view.js?v=<?=time();?>"></script>
+    <script src="assets/js/views/feed-podcast-view.js?v=<?=time();?>"></script>
+    <script src="assets/js/views/feed-programs-view.js?v=<?=time();?>"></script>
+    <script src="assets/js/views/about-us-view.js?v=<?=time();?>"></script>
+    <script src="assets/js/views/view-post-view.js?v=<?=time();?>"></script>
+    
+    <script src="assets/js/radiogen-app.js?v=<?= time(); ?>"></script>
 </head>
 <body>
-    <div class="over" id="over">
-        <div class="overlay">
-            <div class="new image">
-                <div class="img"></div>
-            </div>
-            <div class="new title-container">
-                <div class="title">Feed Title</div>
-                <div class="info">
-                    <div>8 hours ago</div>
-                    <div style="font-size: 10px;align-self:center;">●</div>
-                    <div stlye="color:black">Sanny J</div>
-                </div>
-            </div>
-            <div class="new desc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, consequatur! Exercitationem aliquam consectetur est vero autem aperiam voluptas tenetur sapiente assumenda velit repellat ipsum cumque corporis, consequuntur dolor distinctio quisquam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Error debitis eaque vel provident aut atque sint asperiores nulla nisi autem fugit quae aspernatur, laudantium accusamus, distinctio enim qui obcaecati non. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id itaque nisi quia dolorem in aspernatur a sed libero sunt nulla, amet necessitatibus veritatis laudantium corporis quas explicabo modi illum culpa?
-            </div>
-        </div>
-    </div>
-
+   
     <section class="header-section">
         <div class="dflex row-dir align-center justify-between">
             <h1 class="logo-text">Radio Generation TV</h1>
-            <nav class="dflex row-dir">
-                <div class="item active">
-                    <a href="/">Home</a>
+            <nav class="dflex row-dir nav-bar">
+                <div class="item" header-tab="home">
+                    <a>Home</a>
                     <div class="selection-bar"></div>
                 </div>
-                <div class="item">
-                    <a href="/podcast">Podcast Radio</a>
+                <div class="item" header-tab="podcasts">
+                    <a>Podcast Radio</a>
                     <div class="selection-bar"></div>
                 </div>
-                <div class="item">
-                    <a href="/programs">Programmi</a>
+                <div class="item" header-tab="programs">
+                    <a>Programmi</a>
                     <div class="selection-bar"></div>
                 </div>
-                <div class="item">
-                    <a href="/about-us">Chi siamo</a>
+                <div class="item" header-tab="about-us">
+                    <a>Chi siamo</a>
                     <div class="selection-bar"></div>
                 </div>
             </nav>
-            <div class="dflex row-dir align-center">
+            <div class="dflex row-dir align-center follow-us-wrapper">
                 <div class="sn-text">
                     <span class="follow-us-text">SEGUICI SU</span>
                 </div>
@@ -100,108 +90,9 @@
                     <div class="logo"><div class="logo-img"></div></div>
                 </div>
                 <section class="news-section">
-                    <h1>Feed notizie</h1>
-                    <div class="line-separator"></div>
+                    
                     <feeder-view>
-                        <div class="news-list initial-display dflex row-dir">
-                            
-                            <div class="news-item flex-shrink-0 grow br-3 --ni">
-                                <div class="news-image-place"></div>
-                                <div class="text-container initial-display">
-                                    <div class="text-title-place"></div>
-                                    <div class="vertical-sep"></div>
-                                    <div class="text-date-place"></div>
-                                </div>
-                            </div>
-                            <div class="news-item flex-shrink-0 grow br-3 --ni">
-                                <div class="news-image-place"></div>
-                                <div class="text-container initial-display">
-                                    <div class="text-title-place"></div>
-                                    <div class="vertical-sep"></div>
-                                    <div class="text-date-place"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="news-list dflex row-dir small-news initial-display">
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="v-separator-even-3"></div>
-                            <div class="news-list dflex row-dir small-news initial-display">
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                                <div class="news-item-small pr-3 --ni">
-                                    <div class="news-image"></div>
-                                    <div class="text-container">
-                                        <div class="text-title-place"></div>
-                                        <div class="vertical-sep"></div>
-                                        <div class="text-date-place"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="v-separator-even-3"></div>
-                            
-                        </div>
+                        
                     </feeder-view>
                     <!-- No feed message
                     <div class="plain-feed-text">
@@ -269,11 +160,13 @@
         })();
 
         (() => {
-            const feeder = Feeder.create('news', 'feeder-view');
-            feeder.getRenderer().addView("feeds-view", FeedNewsView);
-            setTimeout(() => {
-                feeder.load();
-            }, 2000);
+
+            const app = new RadioGenApp();
+            try {
+                app.route();
+            } catch(ex) {
+                document.body.querySelector('feeder-view').innerHTML = `<p style="padding-top:14px">Qualcosa è andato storto, <a style="cursor: pointer; text-decoration: underline" onclick="window.location.reload()">Ricarica</a></p>`;
+            }
         })();
     </script>
 </body>

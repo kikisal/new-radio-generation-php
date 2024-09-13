@@ -164,6 +164,14 @@
             if (!this._rowComponent || !this._cellComponent)
                 throw new Error(`Make sure component classes are well defined: RowComponent = ${this._rowComponent}, CellComponent = ${this._cellComponent}`);
         }
+
+        
+        onCleared() {
+            this._rows = [];
+            this._lastRow = null;
+            this._streamData = null;
+
+        }
     
         setFeedsPerRow(count) {
             this._feedsPerRow = count;
@@ -255,6 +263,13 @@
         onViewCreated() {
             //this.setClassList(['news-list', 'dflex', 'row-dir']);
         }
+
+        onCleared() {
+            this._feedsCount = 0;
+            this._topFeeds = [];
+            super.onCleared();
+
+        }
     
         updateFeedsCount(feedStream) {
             if (this._feedsCount >= TopNewsFeeds.FEEDS_PER_ROW)
@@ -291,6 +306,7 @@
             // three modes:
             // loading, clear, no-feeds
             this._mode = 'loading';
+            this.setCanClear(false);
         }
 
         onViewCreated() {
@@ -350,7 +366,7 @@
         }
     }
     
-    class FeedNewsView extends CustomComponent {
+    class FeedPodcastView extends CustomComponent {
         constructor() {
             super();
     
@@ -360,6 +376,12 @@
             this._topFeedsComponent   = null;
             this._smallFeedsComponent = null;
         }
+
+        onCleared() {
+            this._feedsCursor   = 0;
+            this._loadingComponent.updateState({mode: 'loading'});
+        }
+
     
         onViewCreated() {
             this._topFeedsComponent   = this.createComponent(TopNewsFeeds, {
@@ -396,10 +418,14 @@
     
             this._feedsCursor += props.feeds.length;
             
-            if (props.feeds && props.feeds.length > 0)
+            if (props.keep)
                 this._loadingComponent.updateState({mode: 'loading'});
-            else
-                this._loadingComponent.updateState({mode: 'no-feeds'});
+            else {
+                if (props.feeds && props.feeds.length > 0)
+                    this._loadingComponent.updateState({mode: 'loading'});
+                else
+                    this._loadingComponent.updateState({mode: 'no-feeds'});
+            }
         }
     
     
@@ -411,6 +437,20 @@
     
             this.comp(
                 [
+                    ...this.markup_builder({
+                        component: 'div',
+                        extractAll: true,
+                        children: [
+                            {
+                                component: 'h1',
+                                textContent: 'Feed Podcast',
+                            },
+                            {
+                                component: 'div',
+                                classList: ['line-separator', 'mb-mid']
+                            }
+                        ]
+                    }, false, true),
                     this._topFeedsComponent,
                     this._smallFeedsComponent,
                     this._loadingComponent
@@ -426,6 +466,6 @@
         }
     }
 
-    m.FeedNewsView = FeedNewsView;
+    m.FeedPodcastView = FeedPodcastView;
     
 })(window);

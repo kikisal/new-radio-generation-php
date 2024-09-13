@@ -5,6 +5,10 @@
 const DEBUG_MODE = true;
 
 
+function domSelect(query) {
+    return document.querySelector(query);
+}
+
 function textConditional(t1, t2, pred) {
     return pred ? t1 : t2;
 }
@@ -85,7 +89,8 @@ function createComponent(component, parent, data, renderer, classList) {
         domElement.textContent = instance.getTextContent();
     } else if (instance instanceof HTMLImageComponent) {
         domElement = document.createElement('img');
-    }
+    } else if (instance instanceof HTMLH1Component)
+        domElement = document.createElement('h1');
 
     instance.setViewElement(domElement);
 
@@ -107,6 +112,8 @@ function compClassFromString(type) {
             return HTMLImageComponent;
         case 'span':
             return HTMLSpanComponent;
+        case 'h1':
+            return HTMLH1Component;
         default:
             return null;
     }
@@ -124,12 +131,42 @@ class View {
 
         this._key         = null;
 
+        this._canClear    = true;
+
         this._renderMode  = 'replace';
         
         this._appendLength = 0; 
         this._appendIndex  = 0;
 
         this._innerText   = null;
+    }
+
+   
+    setCanClear(state) {
+        this._canClear = state;
+    }
+
+    get canClear() {
+        return this._canClear;
+    }
+
+    clearView() {
+ 
+        if (!this.canClear)
+            return;
+
+        this._appendIndex = 0;
+        this._appendLength = 0;
+        this._children = [];
+
+        if (this.getViewElement())
+            this.getViewElement().innerHTML = '';
+
+        this.onCleared();
+    }
+
+    onCleared() {
+
     }
 
     get renderMode() {
@@ -190,7 +227,7 @@ class View {
             comp.src = docObj.src;
         else if (comp instanceof HTMLSpanComponent)
             comp.setTextContent(docObj.textContent || '');
-
+        
         parent.appendComponent(comp);
         
         if ('textContent' in docObj)
@@ -408,6 +445,14 @@ class HTMLSpanComponent extends View {
     }
 }
 
+class HTMLH1Component extends View {
+    constructor() {
+        super();
+    }
+
+    render() {}
+}
+
 // --- end stock components ---
 
 class StackTraceView extends CustomComponent {
@@ -437,8 +482,23 @@ class DebuggerProxy {
 
 
 class Module {
+    static _moduleList = [];
+
     constructor(name) {
         this._name = name;
+        Module._moduleList.push(this);
+    }
+
+    getModule(_module) {
+        return Module.getModule(_module);
+    }
+
+    hasModule(_module) {
+        return !!Module._moduleList.find(m => m.getName() == _module);
+    }
+
+    static getModule(_module) {
+        return Module._moduleList.find((m) => m.getName() == _module);
     }
 
     getName() {
@@ -497,7 +557,7 @@ class Debugger {
 
 // implements stateful views manager
 class DOMRenderer extends Module {
-    constructor(query) {
+    constructor(query, currentPage, clearHtml) {
         super('DOMRenderer');
 
         this._elementQuery        = query;
@@ -505,21 +565,50 @@ class DOMRenderer extends Module {
         this._currentView         = null;
         this._viewList            = [];
         this._debugger            = Debugger.createDebugger(this);
- 
+        this._clearHtml           = clearHtml;
 
         // this is used to ensure other modules do not override what's currently being rendered
         // on the _renderElement.
         this._stopFutherRendering = false;
+
+        this._currentPage = currentPage; 
 
         this._debugger.registerListener(this);
 
         this.addView('stack-trace-view', StackTraceView);
     }
 
+    clearAll() {
+        for (const view of this._viewList) {
+            this.clearView(view);
+        }
+    }
+
+    clearView(v) {
+        if (v.hasChildren())
+        {
+            const children = [...v.children()];
+            for (const _v of children)
+                this.clearView(_v);
+        }
+
+        v.clearView();
+    }
+
+
+
+    getPage() {
+        return this._currentPage;
+    }
+
     onDebugLog(message) {
         if (Debugger.debuggingMode())
         {
             if (this.viewExists('stack-trace-view')) {
+
+                if (this.hasModule('PageSwitcher') && this.getModule('PageSwitcher').getActivePage() !== this.getPage())
+                    return;
+
                 this.renderView('stack-trace-view', {
                     message
                 });
@@ -565,10 +654,14 @@ class DOMRenderer extends Module {
             this._currentView.updatePropsData(propsData);
             this.renderComponent(this._currentView);
             
-            this._renderElement.innerHTML = '';
-            this._renderElement.appendChild(this._currentView.getViewElement());
-            
-            this._currentView.onComponentMounted();
+            // simple workaround for now
+            if (this.hasModule('PageSwitcher') && this.getModule('PageSwitcher').getActivePage() === this.getPage()) {
+                this._renderElement.innerHTML = '';
+                this._renderElement.appendChild(this._currentView.getViewElement());
+
+                this._currentView.onComponentMounted();
+            }
+
 
             return true; 
         } catch(exception) {
@@ -662,32 +755,10 @@ class SScheduler {
     }
 }
 
-
-class Feeder extends Module {
-
-    static FEEDER_ENDPOINT                = 'http://localhost/api/feeds';
-    static FEEDER_CREATE_SESSION_ENDPOINT = 'http://localhost/api/fcs';
-    static RETRY_FEED_TIMEOUT             = 5000; // 5sec
-    static MAX_RETRYING_ATTEMPS           = 10;
-
-    constructor(type, elementQuery) {
-        super('Feeder');
-
-        this._type             = type;
-        this._devMode          = true;
-        this._debugger         = Debugger.createDebugger(this);
+class OneTimeScrollWatcher extends Module {
+    constructor() {
+        super('OneTimeScrollWatcher');
         
-        this._scheduler        = new SScheduler();
-        this._domRenderer      = new DOMRenderer(elementQuery);
-
-        this._retryAttemps     = 0;
-
-        this._feeds            = [];
-        this._initialTimestamp = -1;
-        
-        this._loaded           = false;
-
-
         this._lastScrollPos    = undefined;
         this._lastScrolledTime = undefined;
         this._scrollTreshold   = 200;
@@ -697,7 +768,7 @@ class Feeder extends Module {
             const el = document.querySelector('html');
             const scrollPos = el.scrollHeight - el.clientHeight - el.scrollTop;
 
-            if (Math.abs(scrollPos) < this._scrollTreshold && !this._scrolledBottom) {
+            if (Math.abs(scrollPos) < this._scrollTreshold) {
                 this._scrolledBottom = true;
                 this.onScrollBottom();
             }
@@ -705,7 +776,16 @@ class Feeder extends Module {
 
         window.addEventListener('scroll', this.onScrollChange.bind(this));
 
-        this._debugger.registerListener(this);
+        this._listenerMap    = new Map();
+        this._activeListener = null;
+    }
+
+    registerListener(name, listener) {
+        this._listenerMap.set(name, listener);
+    }
+    
+    setActiveListener(name) {
+        this._activeListener = name;
     }
 
     onScrollChange() {
@@ -735,11 +815,88 @@ class Feeder extends Module {
             this._scrolledBottom = true;
             this.onScrollBottom();
         }
-        
+    }
+
+    enableScrolling() {
+        this._scrolledBottom = false;
     }
 
     onScrollBottom() {
-       this.feeds();
+
+        if (this._activeListener && this._listenerMap.has(this._activeListener))
+            this._listenerMap.get(this._activeListener).onScrollBottom();
+    }
+
+    static create() {
+        return new OneTimeScrollWatcher();
+    }
+}
+
+class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
+
+    static FEEDER_ENDPOINT                = 'http://localhost/api/feeds';
+    static FEEDER_CREATE_SESSION_ENDPOINT = 'http://localhost/api/fcs';
+    static RETRY_FEED_TIMEOUT             = 5000; // 5sec
+    static MAX_RETRYING_ATTEMPS           = 10;
+
+    constructor(type, elementQuery) {
+        super('Feeder');
+
+        this._type             = type;
+        this._devMode          = true;
+        this._debugger         = Debugger.createDebugger(this);
+        
+        this._scheduler        = new SScheduler();
+        this._domRenderer      = new DOMRenderer(elementQuery, this, __CLEAR_HTML_PAGE);
+
+        this._retryAttemps     = 0;
+
+        this._feeds            = [];
+        this._initialTimestamp = -1;
+        
+        this._loaded           = false;
+        this._requestResetState = false;
+
+        this._fetchingFeeds     = false;
+        this._firstFetchedFeeds = true;
+
+        this._debugger.registerListener(this);
+    }
+
+    resetState() {
+        
+    }
+    
+    onPageSwitch() {
+        if (this._loaded) {
+            this._domRenderer.clearAll();
+            this._currentChunk = 0;
+            this._feeds = [];
+        }
+    }
+
+    onPageActive() {
+
+
+        if (!this._loaded) {
+            window.scrollTo(0, 0);
+            this.load();
+        }
+        else {
+            if (this.getModule('PageSwitcher').getActivePage() !== this)
+                return;
+
+
+            this._domRenderer.renderView("feeds-view", {
+                feeds: [],
+                hasNewFeeds: false,
+                keep: true
+            });
+        }
+    }
+
+    onScrollBottom() {
+        this.feeds();
     }
 
     getRenderer() {
@@ -747,6 +904,10 @@ class Feeder extends Module {
     }
 
     onDebugLog(message) {
+        
+        if (this.getModule('PageSwitcher').getActivePage() !== this)
+            return;
+        
         this._domRenderer.renderView('error-view', {
             message: message
         });
@@ -770,8 +931,12 @@ class Feeder extends Module {
     }
 
     async load() { 
+        if (this._loaded)
+            return;
+
+        this._loading = true;
+
         this.clear();
-        
         if (!await this.createFeedSession()) {
             
             const retryingText = textConditional(
@@ -783,7 +948,9 @@ class Feeder extends Module {
             this._debugger.log(`Couldn't load feeds${retryingText}`);
 
             if (this._retryAttemps >= Feeder.MAX_RETRYING_ATTEMPS) {
-                this._scrolledBottom = false; // ENABLE SCROLLING AGAIN
+                // ENABLE SCROLLING AGAIN
+                this.getModule('OneTimeScrollWatcher').enableScrolling();
+
                 return false;
             }
 
@@ -799,6 +966,7 @@ class Feeder extends Module {
         this._retryAttemps = 0;
         this._currentChunk = 0;
         this._loaded       = true;
+        this._requestResetState = false;
 
         this.feeds();
 
@@ -807,6 +975,9 @@ class Feeder extends Module {
 
     async feeds() {
         if (!this._loaded)
+            return;
+
+        if (this._fetchingFeeds)
             return;
         
         const loadingWidget = this.getRenderer().getView('feeds-view').getByKey('loading-widget');
@@ -818,6 +989,7 @@ class Feeder extends Module {
         }
         
         const newFeeds  = await this.nextFeeds();
+
         let hasNewFeeds = false;
         
         if (newFeeds.length > 0) {
@@ -830,12 +1002,19 @@ class Feeder extends Module {
             feeds: newFeeds,
             hasNewFeeds
         });
+        
 
-        this._scrolledBottom = false; // ENABLE SCROLLING AGAIN
+        // ENABLE SCROLLING AGAIN
+        this.getModule('OneTimeScrollWatcher').enableScrolling();
+        
+        this._fetchingFeeds = false;      
     }
 
     async nextFeeds() {
+        this._fetchingFeeds = true;
+        
         const feeds = await this.getFeeds(this._currentChunk);
+
         if (feeds.length < 1)
             return [];
 
@@ -844,6 +1023,7 @@ class Feeder extends Module {
     }
 
     async getFeeds(chunk) {
+        
         return await http_fetch({
             endpoint: Feeder.FEEDER_ENDPOINT + `?t=${this._type}&chunk=${!chunk ? '' : chunk}`,
             data: {
@@ -871,9 +1051,237 @@ class Feeder extends Module {
     }
 }
 
-function domSelect(query) {
-    return document.querySelector(query);
+class GlobalRouting extends Module {
+    constructor(routes) {
+        super('GlobalRouting');
+
+        this._routes       = routes;
+        this._startRouting = false;
+
+        this.updateURI();
+
+        const pushState = history.pushState;
+
+
+        history.pushState = function(state) {
+            const result = pushState.apply(history, arguments);
+            
+            this.onPushState();
+            return result;
+        }.bind(this);
+
+        window.addEventListener('popstate', this.onPopState.bind(this));
+    }
+
+    updateURI() {
+        this._uri = window.location.pathname;
+    }
+
+    onPushState() {
+        this.updateURI();
+        this.routeToURI();
+    }
+
+    onPopState() {
+        this.updateURI();
+        this.routeToURI();
+    }
+
+    routeTo(uri) {
+        if (!this._startRouting)
+            return;
+
+        const route = this.getRoute(uri);
+        
+        if (!route) {
+            if (this.routeExists('/404'))
+                this.redirect('/404');
+
+            return;
+        }
+
+        route();
+    }
+
+    redirectTo(uri) {
+        history.pushState(null, null, uri);
+    }
+
+    getRoute(uri) {
+        return this._routes[uri];
+    }
+
+    routeExists(uri) {
+        return uri in this._routes;
+    }
+
+    redirect(uri) {
+        history.pushState(null, '404', '/404');
+    }
+
+    routeToURI() {
+        this.routeTo(this.uri());
+    }
+
+    uri() {
+        return this._uri;
+    }
+
+    setRoutes(routes) {
+        this._routes = routes;
+    }
+
+    route() {
+        this._startRouting = true;
+        this.updateURI();
+        this.routeToURI();
+    }
+}
+
+class PageSwitcher extends Module {
+    constructor(domElement, clearHtml) {
+        super('PageSwitcher');
+
+        this._domElement = domSelect(domElement);
+        if (!this._domElement)
+            throw new Error(`PageSwitcher: element ${domElement} not found`);
+
+        this._pages        = new Map();
+        this._activePage   = null;
+        this._clearHtml = clearHtml;
+    }
+
+    getActivePage() {
+        return this._pages.get(this._activePage);
+    }
+
+    addPage(page, switcherPage) {
+        this._pages.set(page, switcherPage);
+    }
+
+    getPage(page) {
+        return this._pages.get(page);
+    }
+
+    switch(page) {
+        const p = this.getPage(page);
+        if (p) {
+            if (this._activePage && this._pages.has(this._activePage))
+                this._pages.get(this._activePage).onPageSwitch();
+
+            this._activePage = page;
+    
+            p.onPageActive();
+            return;
+        }
+
+
+        this._domElement.innerHTML = this._clearHtml;        
+    }
+
+    static create(domElement, clearHtml) {
+        return new PageSwitcher(domElement, clearHtml);
+    }
 }
 
 
+const __CLEAR_HTML_PAGE = `
+    <div class="news-list initial-display dflex row-dir">
+        
+        <div class="news-item flex-shrink-0 grow br-3 --ni">
+            <div class="news-image-place"></div>
+            <div class="text-container initial-display">
+                <div class="text-title-place"></div>
+                <div class="vertical-sep"></div>
+                <div class="text-date-place"></div>
+            </div>
+        </div>
+        <div class="news-item flex-shrink-0 grow br-3 --ni">
+            <div class="news-image-place"></div>
+            <div class="text-container initial-display">
+                <div class="text-title-place"></div>
+                <div class="vertical-sep"></div>
+                <div class="text-date-place"></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="news-list dflex row-dir small-news initial-display">
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
 
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+        </div>
+        <div class="v-separator-even-3"></div>
+        <div class="news-list dflex row-dir small-news initial-display">
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+            <div class="news-item-small pr-3 --ni">
+                <div class="news-image"></div>
+                <div class="text-container">
+                    <div class="text-title-place"></div>
+                    <div class="vertical-sep"></div>
+                    <div class="text-date-place"></div>
+                </div>
+            </div>
+        </div>
+        <div class="v-separator-even-3"></div>
+        
+    </div>`;
