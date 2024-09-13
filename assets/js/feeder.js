@@ -105,6 +105,8 @@ function compClassFromString(type) {
             return HTMLDivComponent;
         case 'img':
             return HTMLImageComponent;
+        case 'span':
+            return HTMLSpanComponent;
         default:
             return null;
     }
@@ -119,6 +121,8 @@ class View {
         this._renderer    = null;
         this._name        = null;
         this._props       = null;
+
+        this._key         = null;
 
         this._renderMode  = 'replace';
         
@@ -147,7 +151,6 @@ class View {
             result.push(_c);
             result = result.concat(this.markup_builder(docObj, false, true));
         }
-
 
         return result;
     }
@@ -185,6 +188,8 @@ class View {
         
         if  (comp instanceof HTMLImageComponent)
             comp.src = docObj.src;
+        else if (comp instanceof HTMLSpanComponent)
+            comp.setTextContent(docObj.textContent || '');
 
         parent.appendComponent(comp);
         
@@ -203,7 +208,7 @@ class View {
     markup_builder(docObj, append, keepChildren) {
         const result = this._domBuilder(this, docObj);
         
-        let arr = result;
+        let arr = [result];
         if (docObj.extractAll)
             arr = [...result.children()];
 
@@ -237,9 +242,37 @@ class View {
 
     appendComponent(child) {
         this._children.push(child);
-        ++this._appendLength;
+        if (this.renderMode == 'append')
+            ++this._appendLength;
     }
 
+    _getByKey(view, key) {
+        for (const c of view.children())
+        {
+            if (c.getKey() == key)
+                return c;
+
+            if (c.hasChildren()) {
+                let result = this._getByKey(c, key);
+                if (!result)
+                    continue;
+            }
+        }
+
+        return null;
+    }
+
+    getByKey(key) {
+        return this._getByKey(this, key);
+    }
+
+    getKey() {
+        return this._key;
+    }
+
+    setKey(key) {
+        this._key = key;
+    }
 
     keep() {
 
@@ -706,7 +739,7 @@ class Feeder extends Module {
     }
 
     onScrollBottom() {
-        this.feeds();
+       this.feeds();
     }
 
     getRenderer() {
@@ -775,7 +808,15 @@ class Feeder extends Module {
     async feeds() {
         if (!this._loaded)
             return;
+        
+        const loadingWidget = this.getRenderer().getView('feeds-view').getByKey('loading-widget');
 
+        if (loadingWidget.getMode() == 'clear') {
+            loadingWidget.updateState({
+                mode: 'loading'
+            });
+        }
+        
         const newFeeds  = await this.nextFeeds();
         let hasNewFeeds = false;
         

@@ -624,3 +624,21 @@ h1 {
     opacity: .2;
     animation: fadeInOut 2s infinite;
 }
+
+.loading-widget {
+    width: 44px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.no-feeds-textwrapper {
+    padding: 14px 0;
+    color: #36393f;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.no-feeds-text {
+
+}

@@ -147,6 +147,9 @@ $feeds = genRandomFeeds(40, $nameTable, $descTable);
 
 usort($feeds, 'sortByTimestamp');
 
+sleep(2);
+
 echo     json_encode($feeds);
-//echo json_encode([]);
+
+// echo json_encode([]);
 
