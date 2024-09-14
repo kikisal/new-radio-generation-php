@@ -173,7 +173,7 @@ img {
 }
 
 .main-content {
-    width: 1024px;
+    width: 1324px;
     margin: 4px auto 10px auto;
     /* padding-bottom: 60px; */
     font-size: 1em;
@@ -313,18 +313,18 @@ section.news-section {
 }
 
 .news-image-place {
-    background: #E4E6E9;
+    background: #181818;
 }
 
 .text-title-place {
     padding: 12px 0;
-    background: #E4E6E9;
+    background: #181818;
     width: 60%;
 }
 
 .text-date-place {
     padding: 9px 0;
-    background: #E4E6E9;
+    background: #181818;
     width: 30%;
 }
 
@@ -369,10 +369,10 @@ section.news-section {
 h1 {
     font-size: 21px;
     font-weight: 600;
-    color: #e23337;
+    color: #e5e5e5;
     /* letter-spacing: 1px; */
     text-transform: uppercase;
-    padding: 10px 10px 5px 10px;
+    padding: 10px 10px 0px 10px;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, .2);
 }
 
@@ -422,7 +422,7 @@ h1 {
 }
 
 .text-container.initial-display {
-    border-top: 2px solid #e7e7e7;
+    border-top: 2px solid #181818;
 }
 
 .text-md {
@@ -496,6 +496,7 @@ h1 {
     
     overflow: hidden;
     border-bottom: 3px solid #fff;
+    box-shadow: 0 7px 43px rgba(0, 0, 0, .2);
 }
 
 .header-wrapper {
@@ -561,7 +562,7 @@ h1 {
 }
 
 .small-news.initial-display.news-list .news-image {
-    background-color: #E4E6E9;
+    background-color: #181818;
 }
 
 .small-news.news-list .text-container {
@@ -668,6 +669,19 @@ h1 {
     50% { opacity: 1; }
     100% { opacity: .2; }
 }
+@keyframes bgAnimation {
+    0% {
+        background-color: #f5252562;
+    }
+
+    50% {
+        background-color: #F52525;
+    }
+
+    100% {
+        background-color: #f5252562;
+    }
+}
 
 .news-list.initial-display .--ni {
     opacity: .2;
@@ -766,7 +780,7 @@ h1 {
 .image-slider {
     overflow: hidden;
     margin-top: 74px;
-    --factor: 6;
+    --factor: 5.5;
     --base-size: 100px;
 }
 
@@ -789,6 +803,16 @@ h1 {
     background: linear-gradient(180deg, #000000c2, transparent);
 }
 
+.image-slider-item::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 28%;
+    background: linear-gradient(0, #000000c2, transparent);
+}
+
 .image-slider-align {
     display: flex;
     flex-direction: row;
@@ -808,4 +832,16 @@ h1 {
     margin-bottom: 20px;
     font-size: 18px;
     color: #d4d4d4;
+}
+
+.live-recording {
+    width:  16px;
+    height: 16px;
+    background-color: #f52525;
+    border-radius: 50%;
+}
+
+
+.live-recording.live {
+    animation: bgAnimation 2s infinite;
 }

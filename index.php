@@ -11,7 +11,13 @@
     <link rel="stylesheet" href="/assets/style.css?cache=<?= time() ?>" />
     <link rel="stylesheet" href="/assets/about-us.css" />
     
+
+    
     <script src="assets/js/date-formatter.js?<?= time(); ?>"></script>
+    
+    <script src="assets/js/core.js?v=<?= time(); ?>"></script>
+    <script src="assets/js/dom-renderer.js?v=<?= time(); ?>"></script>
+    
     <script src="assets/js/feeder.js?v=<?= time(); ?>"></script>
     <script src="assets/js/views/feed-news-view.js?v=<?=time();?>"></script>
     <script src="assets/js/views/feed-podcast-view.js?v=<?=time();?>"></script>
@@ -30,7 +36,10 @@
     <section class="header-section">
         <div class="dflex row-dir align-center justify-between header-wrapper">
             <div class="slogan header-item">
-                <div class="slogan-image"></div>
+                <div class="flex align-center">
+                    <div class="slogan-image"></div>
+                    <div class="live-recording live"></div>
+                </div>
             </div>
             <nav class="dflex row-dir nav-bar">
                 <div class="item" header-tab="home">
@@ -119,9 +128,7 @@
                 
                 <section class="news-section">
                     
-                    <feeder-view>
-                        
-                    </feeder-view>
+                    <feeder-view></feeder-view>
                     <!-- No feed message
                     <div class="plain-feed-text">
                         <span>Nessun feed da mostrare.</span>
