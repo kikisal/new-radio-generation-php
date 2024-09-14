@@ -439,7 +439,7 @@
                         children: [
                             {
                                 component: 'h1',
-                                textContent: 'Feed Notizie',
+                                textContent: 'Feed News',
                             },
                             {
                                 component: 'div',

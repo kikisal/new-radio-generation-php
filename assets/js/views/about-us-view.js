@@ -63,7 +63,7 @@
     m.AboutUsView = AboutUsView;
     m.AboutUsPage = AboutUsPage;
 
-    const ABOUT_US_HTML = `
+    const ABOUT_US_HTML = `<div class="about-us-container">
     <h1>Chi siamo?</h1><div class="line-separator mb-mid"></div>
     <section>
         <h2>La nostra storia</h2>
@@ -73,6 +73,6 @@
     <section>
         <h2>La nostra missione</h2>
         <p>La nostra missione è far vibrare il pubblico con selezioni musicali curate e mix energici. Ci impegniamo a creare atmosfere che ispirino e facciano ballare, portando la nostra arte a nuovi livelli in ogni performance. Lavoriamo per soddisfare le esigenze dei nostri clienti, offrendo serate personalizzate che rispecchiano il loro stile e la loro visione. </p>
-    </section>`;
+    </section></div>`;
     
 })(window);

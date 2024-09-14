@@ -157,7 +157,9 @@ class View {
 
         this._appendIndex = 0;
         this._appendLength = 0;
-        this._children = [];
+
+        if (this.renderMode == 'append')
+            this._children = [];
 
         if (this.getViewElement())
             this.getViewElement().innerHTML = '';
@@ -876,8 +878,6 @@ class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
     }
 
     onPageActive() {
-
-
         if (!this._loaded) {
             window.scrollTo(0, 0);
             this.load();
@@ -886,12 +886,16 @@ class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
             if (this.getModule('PageSwitcher').getActivePage() !== this)
                 return;
 
+            this.feeds();
 
+            /*
             this._domRenderer.renderView("feeds-view", {
                 feeds: [],
                 hasNewFeeds: false,
                 keep: true
             });
+            */
+            
         }
     }
 
@@ -979,6 +983,8 @@ class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
 
         if (this._fetchingFeeds)
             return;
+
+        this._fetchingFeeds = true;
         
         const loadingWidget = this.getRenderer().getView('feeds-view').getByKey('loading-widget');
 
@@ -1011,7 +1017,6 @@ class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
     }
 
     async nextFeeds() {
-        this._fetchingFeeds = true;
         
         const feeds = await this.getFeeds(this._currentChunk);
 

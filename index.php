@@ -20,12 +20,18 @@
     <script src="assets/js/views/view-post-view.js?v=<?=time();?>"></script>
     
     <script src="assets/js/radiogen-app.js?v=<?= time(); ?>"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
 </head>
 <body>
    
     <section class="header-section">
-        <div class="dflex row-dir align-center justify-between">
-            <h1 class="logo-text">Radio Generation TV</h1>
+        <div class="dflex row-dir align-center justify-between header-wrapper">
+            <div class="slogan header-item">
+                <div class="slogan-image"></div>
+            </div>
             <nav class="dflex row-dir nav-bar">
                 <div class="item" header-tab="home">
                     <a>Home</a>
@@ -40,11 +46,11 @@
                     <div class="selection-bar"></div>
                 </div>
                 <div class="item" header-tab="about-us">
-                    <a>Chi siamo</a>
+                    <a>Contatti</a>
                     <div class="selection-bar"></div>
                 </div>
             </nav>
-            <div class="dflex row-dir align-center follow-us-wrapper">
+            <div class="dflex row-dir align-center follow-us-wrapper header-item">
                 <div class="sn-text">
                     <span class="follow-us-text">SEGUICI SU</span>
                 </div>
@@ -72,8 +78,35 @@
             </div>
         </div>
     </section>
-        
-
+    <div class="image-slider">
+        <div class="image-slider-container">
+            <div class="image-slider-controller">
+                <div class="image-slider-align">
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img1.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img2.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img3.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img4.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img5.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img6.jfif" alt=""/>
+                    </div>
+                    <div class="image-slider-item">
+                        <img src="/assets/image-slider/img7.jfif" alt=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="content-wrapper content-shadow">
         
         <div class="main-content">
@@ -83,12 +116,7 @@
 
             <div class="container-box">
                 
-                <div class="banner">
-                    <div class="banner-image">
-                        
-                    </div>
-                    <div class="logo"><div class="logo-img"></div></div>
-                </div>
+                
                 <section class="news-section">
                     
                     <feeder-view>
