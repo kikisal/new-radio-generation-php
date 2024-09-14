@@ -16,6 +16,8 @@ class RadioGenApp extends GlobalRouting {
         });
 
         this._currentPage      = this.uri();
+        this._feederViewElement = domSelect('feeder-view');
+
         this._scrollingWatcher = OneTimeScrollWatcher.create();
         this._pageSwitcher     = PageSwitcher.create('feeder-view', CLEAR_HTML_PAGE);
 
@@ -163,6 +165,7 @@ class RadioGenApp extends GlobalRouting {
         if (isClicked && tab) {
             if (tab._pageId) {
                 this.redirectTo(tab._pageId);
+                window.scrollTo(0, 200);
             }
         }
     }

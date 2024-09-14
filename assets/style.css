@@ -17,6 +17,10 @@ html {
     --text-color: #e8e8e8;
 }
 
+* {
+    scroll-behavior: smooth;
+}
+
 body {
     position: relative;
     height: 100%;

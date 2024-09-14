@@ -7,10 +7,10 @@
     
     class Feeder extends Module /* implements SwitcherPage, ScrollListener */ {
     
-        static FEEDER_ENDPOINT                = 'http://localhost/api/feeds';
-        static FEEDER_CREATE_SESSION_ENDPOINT = 'http://localhost/api/fcs';
-        static RETRY_FEED_TIMEOUT             = 5000; // 5sec
-        static MAX_RETRYING_ATTEMPS           = 10;
+        static FEEDER_ENDPOINT                = rg_config.FEEDER_ENDPOINT;
+        static FEEDER_CREATE_SESSION_ENDPOINT = rg_config.FEEDER_CREATE_SESSION_ENDPOINT;
+        static RETRY_FEED_TIMEOUT             = rg_config.RETRY_FEED_TIMEOUT;
+        static MAX_RETRYING_ATTEMPS           = rg_config.MAX_RETRYING_ATTEMPS;
     
         constructor(type, elementQuery) {
             super('Feeder');
