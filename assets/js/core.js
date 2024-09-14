@@ -4,7 +4,7 @@
  */
 
 ((m) => {
-    const DEBUG_MODE = true;
+    const DEBUG_MODE = rg_config.DEBUG_MODE;
 
     function domSelect(query) {
         return document.querySelector(query);

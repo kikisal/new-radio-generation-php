@@ -1,4 +1,4 @@
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/core.php'; ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -9,12 +9,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
     <link rel="shortcut icon" href="<?= SITE_URL ?>/assets/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/style.css?cache=<?= time() ?>" />
+    <link rel="stylesheet" href="<?= SITE_URL ?>/assets/style.css?cache=<?= cv(); ?>" />
     <link rel="stylesheet" href="<?= SITE_URL ?>/assets/about-us.css" />
     
     <script type="text/javascript">
         ((m) => {
             m.rg_config = {
+                DEBUG_MODE:                     <?= DEBUG_MODE ? 'true' : 'false'; ?>,
                 FEEDER_ENDPOINT:                '<?= SITE_URL ?>/api/feeds',
                 FEEDER_CREATE_SESSION_ENDPOINT: '<?= SITE_URL ?>/api/fcs',
                 RETRY_FEED_TIMEOUT: 5000, // 5sec
@@ -23,19 +24,19 @@
         })(window);
     </script>
 
-    <script src="<?= SITE_URL ?>/assets/js/date-formatter.js?<?= time(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/date-formatter.js?<?= cv();; ?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/core.js?v=<?= time(); ?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= time(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/core.js?v=<?= cv();; ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= cv();; ?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= time(); ?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=time();?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=time();?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-programs-view.js?v=<?=time();?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/about-us-view.js?v=<?=time();?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/view-post-view.js?v=<?=time();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= cv();; ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();;?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=cv();;?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-programs-view.js?v=<?=cv();;?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/about-us-view.js?v=<?=cv();;?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/view-post-view.js?v=<?=cv();;?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= time(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= cv();; ?>"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">

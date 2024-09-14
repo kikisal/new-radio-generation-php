@@ -1,4 +1,5 @@
 <?php
+/* simple autoloader. */
 
 define('CLASS_PATH', $_SERVER['DOCUMENT_ROOT'] . '/src/');
 define('PHP_EXTENSION', '.php');
