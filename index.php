@@ -134,38 +134,12 @@
             </div>
 
             <div class="container-box">
-                
-                
                 <section class="news-section">
-                    
                     <feeder-view></feeder-view>
-                    <!-- No feed message
-                    <div class="plain-feed-text">
-                        <span>Nessun feed da mostrare.</span>
-                    </div>
-                     -->
-
-                    <!-- Initial loading feed cards -->
-                    
-                    
-                    <!-- No more feeds to show.
-                    <div class="feed-end"></div>
-                    -->
-
-                    <!-- Loader spinner
-                    <div class="loader-content">
-                        <div class="loader-spinner">
-                            <img src="/assets/spinners/spinner.svg" alt="">
-                        </div>
-                    </div>
-                    -->
-
                 </section>
                 <!--
                 <section class="news-section">
                     <h1>Nuovi DJ Mixsets</h1>
-
-                    
                 </section>
                 -->
             </div>
@@ -193,23 +167,13 @@
         </div>
     </div>
     <script>
-
-        (() => {
-            const items = document.querySelectorAll('.news-list.initial-display .--ni');
-            const k     = .1;
-
-            items.forEach((item, index) => {
-                const delay = index * k;
-                item.style.animationDelay = `${delay}s`;
-            }); 
-        })();
-
         (() => {
 
             const app = new RadioGenApp();
             try {
                 app.route();
             } catch(ex) {
+                // fallback in the worst case.
                 document.body.querySelector('feeder-view').innerHTML = `<p style="padding-top:14px">Qualcosa è andato storto, <a style="cursor: pointer; text-decoration: underline" onclick="window.location.reload()">Ricarica</a></p>`;
             }
         })();
