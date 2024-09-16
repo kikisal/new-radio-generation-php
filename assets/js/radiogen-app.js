@@ -44,6 +44,8 @@ class RadioGenApp extends GlobalRouting {
             this._programsHeaderTab,
             this._aboutUsHeaderTab
         ], this.toggleHeaderTab.bind(this));
+
+        this._mobileHeader = new MobileHeader(".mobile-menu-drawer-overlay");
     }
 
     index() {

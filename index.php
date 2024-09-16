@@ -3,8 +3,11 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Radio Generation - Home</title>
+    <link rel="manifest" href="<?= SITE_URL ?>/manifest.json">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
@@ -24,27 +27,77 @@
         })(window);
     </script>
 
-    <script src="<?= SITE_URL ?>/assets/js/date-formatter.js?<?= cv();; ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/date-formatter.js?<?= cv(); ?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/core.js?v=<?= cv();; ?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= cv();; ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/core.js?v=<?= cv(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= cv(); ?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= cv();; ?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();;?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=cv();;?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/feed-programs-view.js?v=<?=cv();;?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/about-us-view.js?v=<?=cv();;?>"></script>
-    <script src="<?= SITE_URL ?>/assets/js/views/view-post-view.js?v=<?=cv();;?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= cv(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=cv();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/feed-programs-view.js?v=<?=cv();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/about-us-view.js?v=<?=cv();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/view-post-view.js?v=<?=cv();?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= cv(); ?>"></script>
+
+    <script defer src="<?= SITE_URL ?>/assets/js/image-slider.js?v=<?= cv(); ?>"></script>
     
-    <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= cv();; ?>"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
-<body>
-   
+<body class="lock-scrollbar">
+    <div class="mobile-menu-drawer-overlay">
+        <div class="mobile-menu-drawer">
+            <div class="menu-header flex align-center">
+                <div class="mobile-menu">
+                    <div class="menu-button"></div>
+                </div>
+                <div class="live-image-wrapper live flex align-center">
+                    <div class="live-image"></div>
+                    <div class="live-circle"></div>
+                </div>
+            </div>
+            <div class="header-sections-wrapper">
+                <div class="header-sections">
+                    <div class="menu-section">
+                        <div class="menu-items">
+                            <div class="menu-item active flex align-center" route-page="home">
+                                <div class="menu-icon home"></div>
+                                <div class="menu-label">Home</div>
+                            </div>
+                            <div class="menu-item flex align-center" route-page="podcast">
+                                <div class="menu-icon podcast"></div>
+                                <div class="menu-label">Podcast</div>    
+                            </div>
+                            <div class="menu-item flex align-center" route-page="programs">
+                                <div class="menu-icon programs"></div>
+                                <div class="menu-label">Programmi</div>    
+                            </div>
+                            <div class="menu-item flex align-center" route-page="about-us">
+                                <div class="menu-icon contact"></div>
+                                <div class="menu-label">Contatti</div>    
+                            </div>
+                        </div>
+                        <div class="hor-bar"></div>
+                    </div>
+                    
+                    <div class="menu-section">
+                        <div class="mh-wrapper">
+                            <div class="small-text">
+                                <span>&copy; 2024 radiogeneration.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <section class="header-section">
         <div class="dflex row-dir align-center justify-between header-wrapper">
+            <div class="mobile-menu">
+                <div class="menu-button"></div>
+            </div>
             <div class="slogan header-item">
                 <div class="flex align-center">
                     <div class="slogan-image"></div>
@@ -100,7 +153,7 @@
     <div class="image-slider">
         <div class="image-slider-container">
             <div class="image-slider-controller">
-                <div class="image-slider-align">
+                <div class="image-slider-align" --slider-items>
                     <div class="image-slider-item">
                         <img src="<?= SITE_URL ?>/assets/image-slider/img1.jfif" alt=""/>
                     </div>
@@ -163,6 +216,34 @@
             -->
             <div class="brand-section">
                 <span>&copy; radiogeneration.com, <span class="t-bold">tutti i diritti riservati</span></span>
+            </div>
+        </div>
+    </div>
+    <div class="radio-overlay">
+        <div class="radio-wrapper">
+            <div class="flex align-center space-between">
+                <div class="flex align-center">
+                    <div class="radio-button">
+                        <div class="radio-play-circle">
+                            <div class="play-button playing"></div>
+                        </div>
+                    </div>
+                    <div class="radio-text">
+                        <div class="cta">
+                            <span>Ascolta la diretta!</span>
+                        </div>
+                        <div class="slogan-mobile">
+                            <span>La radio che si vede</span>
+                        </div>
+                    </div>
+                    
+                </div>    
+                <div class="radio-slogan-text">
+                    <span>La radio che si vede!</span>
+                    <div class="slogan-small">
+                        <span>Solo su radiogeneration.com</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

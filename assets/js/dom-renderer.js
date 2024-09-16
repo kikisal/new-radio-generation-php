@@ -420,6 +420,10 @@
         updateURI() {
             this._uri = window.location.pathname;
         }
+        
+        currentRoute() {
+            return this.uri();
+        }
     
         onPushState() {
             this.updateURI();

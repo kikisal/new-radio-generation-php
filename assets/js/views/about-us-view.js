@@ -65,7 +65,7 @@
 
     const ABOUT_US_HTML = `<div class="about-us-container">
     <h1>Chi siamo?</h1><div class="line-separator mb-mid"></div>
-    <section>
+    <section class="story-section">
         <h2>La nostra storia</h2>
         <p>Siamo un team di DJ professionisti, uniti dalla passione per la musica e dalla voglia di far vivere emozioni uniche attraverso i nostri set. Dal 2005, ci siamo affermati sulla scena musicale portando suoni innovativi e mix coinvolgenti che trasformano ogni evento in un'esperienza indimenticabile.</p>
     </section>

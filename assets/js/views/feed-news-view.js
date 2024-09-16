@@ -11,7 +11,7 @@
         }
     
         onViewCreated() {
-            this.setClassList(['news-list', 'dflex', 'row-dir', 'small-news'])
+            this.setClassList(['news-list', 'dflex', 'row-dir', 'small-news', 'top-news'])
         }
     }
     
