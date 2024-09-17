@@ -21,20 +21,19 @@
             this._playButton        = this._radioBarOverlay.querySelector('[--play-button]');
             this._playIcon          = this._radioBarOverlay.querySelector('[--play-icon]');
 
-            this._playerPlaying     = false;
+            this._ctaSpanElement    = this._radioBarOverlay.querySelector('.cta span');
+            this._ctaTextContent    = this._ctaSpanElement.textContent;
+            
+            this._playAfterLoaded   = false;
+            this._audioError        = false;
 
             this._playButton.addEventListener('click', this.onPlayButtonClick.bind(this));
         }
 
-        getAudioPlayer() {
-            return this._audioPlayer;
-        }
-
-        getSoundBox() {
-            return this._soundBox;
-        }
-
         onAudioPlay() {
+            if (this._playAfterLoaded)
+                this._playAfterLoaded = false;
+            
             this._playIcon.classList.add('playing');
         }
 
@@ -43,20 +42,61 @@
         }
         
         onAudioLoaded() {
+            this._playButton.classList.remove('loading');
+        
             this._playButton.classList.add('loaded');
+            if (this._playAfterLoaded)
+                this.getAudioPlayer().play();
+        }
+
+        onAudioLoading() {
+            this._playButton.classList.add('loading');
         }
         
-        onAudioLoaded() {
-            console.log('RADIO-BAR: AUDIO ERROR THROWN');
+        onAudioError() {
+            this._playButton.classList.add('error');
+            this._audioError = true;
+
+            this._ctaSpanElement.textContent = 'Qualcosa è andato storto, riprova più tardi!';
+
+            setTimeout(() => {
+                if (this._audioError) { 
+                    this._audioError = false;
+                    this._playButton.classList.remove('error');
+                    this._playButton.classList.remove('loading');
+                    this._ctaSpanElement.textContent = this._ctaTextContent;
+                }
+            }, 5000);
         }
         
+        onAudioDispatch() {
+
+        }
         
         onPlayButtonClick() {
-            this._playerPlaying = this.getAudioPlayer().play(this.getSoundBox());
+            if (this._audioError) 
+                return;
+            
+
+            this._soundBoxLoaded = this.getAudioPlayer().isSoundBoxLoaded(this.getSoundBox());
+            if (!this._soundBoxLoaded) {
+                this._playAfterLoaded = true;
+                this.getAudioPlayer().loadSoundBox(this.getSoundBox());
+            } else {
+                this.getAudioPlayer().play();
+            }
         }
 
         streamingUrl() {
             return this._radioStreamingURL;
+        }
+
+        getAudioPlayer() {
+            return this._audioPlayer;
+        }
+
+        getSoundBox() {
+            return this._soundBox;
         }
 
         static create(overlay) {

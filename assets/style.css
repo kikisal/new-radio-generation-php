@@ -872,6 +872,19 @@ h1 {
     transform: rotate(-2deg);
 }
 
+.radio-button.loading {
+    opacity: .5;
+}
+
+.radio-button.error {
+    cursor: default;
+    filter: blur(2px);
+}
+
+.radio-button.error .play-button {
+    
+}
+
 .radio-button.loaded .radio-play-circle {
     cursor: pointer;
 }
@@ -989,7 +1002,6 @@ h1 {
 
 .mobile-menu-drawer-overlay.closing .mobile-menu-drawer {
     left: calc(-1*var(--drawer-width))!important;
-    
 }
 
 .mobile-menu-drawer-overlay.active .header-scrim {
@@ -1227,6 +1239,13 @@ h1 {
 }
 
 @media screen and (max-width: 800px) {
+    .cta {
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
+        max-width: 320px;
+        overflow: hidden;
+    }
+    
     .about-us-container {
         width: 100%;
         padding: 0 16px;

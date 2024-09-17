@@ -24,7 +24,7 @@
                 RETRY_FEED_TIMEOUT: 5000, // 5sec
                 MAX_RETRYING_ATTEMPS: 10,
 
-                RADIO_STREAMING_URL: 'radiourl.com',
+                RADIO_STREAMING_URL: '<?= RADIO_STREAM_URL; ?>'
             };
         })(window);
     </script>
@@ -264,6 +264,7 @@
             </div>
         </div>
     </div>
+    <hidden-elements></hidden-elements>
     <script>
         (() => {
 
