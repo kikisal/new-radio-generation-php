@@ -9,6 +9,10 @@
     function domSelect(query) {
         return document.querySelector(query);
     }
+
+    function domSelectAll(query) {
+        return document.querySelectorAll(query);
+    }
     
     function textConditional(t1, t2, pred) {
         return pred ? t1 : t2;
@@ -216,6 +220,7 @@
 
     m.DEBUG_MODE           = DEBUG_MODE;
     m.domSelect            = domSelect;
+    m.domSelectAll         = domSelectAll;
     m.textConditional      = textConditional;
     m.formatNumber         = formatNumber;
     m.http_fetch           = http_fetch;

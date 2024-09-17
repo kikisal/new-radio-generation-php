@@ -402,6 +402,8 @@
             this._routes       = routes;
             this._startRouting = false;
     
+            this._controllers = [];
+
             this.updateURI();
     
             const pushState = history.pushState;
@@ -415,6 +417,11 @@
             }.bind(this);
     
             window.addEventListener('popstate', this.onPopState.bind(this));
+
+        }
+
+        addController(controller) {
+            this._controllers.push(controller);
         }
     
         updateURI() {
@@ -447,8 +454,21 @@
     
                 return;
             }
+
+            this._fireControllersEvents(uri);
     
             route();
+        }
+
+        _fireControllersEvents(uri) {
+            for (const c of this._controllers) {
+                
+                try {
+                    c.onRoute(uri);
+                } catch(ex) {
+                    console.error('[GlobalRouting] Exception: ', ex);
+                }
+            }
         }
     
         redirectTo(uri) {

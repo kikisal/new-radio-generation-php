@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Radio Generation - Home</title>
-    <link rel="manifest" href="<?= SITE_URL ?>/manifest.json">
+    
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,12 +33,19 @@
     <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= cv(); ?>"></script>
     
     <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= cv(); ?>"></script>
+
+    <script src="<?= SITE_URL; ?>/assets/js/mobile-menu.js?v=<?= cv(); ?>"></script>
+
+    <!-- Views -->
     <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();?>"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=cv();?>"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/feed-programs-view.js?v=<?=cv();?>"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/about-us-view.js?v=<?=cv();?>"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/view-post-view.js?v=<?=cv();?>"></script>
+    
+    <!-- RadioGen App -->
     <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= cv(); ?>"></script>
+
 
     <script defer src="<?= SITE_URL ?>/assets/js/image-slider.js?v=<?= cv(); ?>"></script>
     
@@ -46,8 +53,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
-<body class="lock-scrollbar">
+<body>
     <div class="mobile-menu-drawer-overlay">
+        <div class="header-scrim"></div>
         <div class="mobile-menu-drawer">
             <div class="menu-header flex align-center">
                 <div class="mobile-menu">
@@ -62,19 +70,19 @@
                 <div class="header-sections">
                     <div class="menu-section">
                         <div class="menu-items">
-                            <div class="menu-item active flex align-center" route-page="home">
+                            <div class="menu-item flex align-center" route-page="/">
                                 <div class="menu-icon home"></div>
                                 <div class="menu-label">Home</div>
                             </div>
-                            <div class="menu-item flex align-center" route-page="podcast">
+                            <div class="menu-item flex align-center" route-page="/podcast">
                                 <div class="menu-icon podcast"></div>
                                 <div class="menu-label">Podcast</div>    
                             </div>
-                            <div class="menu-item flex align-center" route-page="programs">
+                            <div class="menu-item flex align-center" route-page="/programs">
                                 <div class="menu-icon programs"></div>
                                 <div class="menu-label">Programmi</div>    
                             </div>
-                            <div class="menu-item flex align-center" route-page="about-us">
+                            <div class="menu-item flex align-center" route-page="/about-us">
                                 <div class="menu-icon contact"></div>
                                 <div class="menu-label">Contatti</div>    
                             </div>

@@ -45,7 +45,7 @@ class RadioGenApp extends GlobalRouting {
             this._aboutUsHeaderTab
         ], this.toggleHeaderTab.bind(this));
 
-        this._mobileHeader = new MobileHeader(".mobile-menu-drawer-overlay");
+        this._mobileHeader = MobileMenu.create(".mobile-menu-drawer-overlay", this);
     }
 
     index() {
@@ -156,6 +156,9 @@ class RadioGenApp extends GlobalRouting {
     }
 
     toggleHeaderTab(tab, isClicked) {
+
+        this._currentPage = this.uri();
+        
         if (this._activeHeaderTab)
             this._activeHeaderTab.classList.remove('active');
 
