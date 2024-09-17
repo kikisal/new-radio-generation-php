@@ -18,6 +18,8 @@ class RadioGenApp extends GlobalRouting {
         this._currentPage      = this.uri();
         this._feederViewElement = domSelect('feeder-view');
 
+        this._audioPlayer      = AudioPlayer.create();
+
         this._scrollingWatcher = OneTimeScrollWatcher.create();
         this._pageSwitcher     = PageSwitcher.create('feeder-view', CLEAR_HTML_PAGE);
 
@@ -46,6 +48,7 @@ class RadioGenApp extends GlobalRouting {
         ], this.toggleHeaderTab.bind(this));
 
         this._mobileHeader = MobileMenu.create(".mobile-menu-drawer-overlay", this);
+        this._radioBar     = RadioBar.create("[--radio-bar-overlay]");        
     }
 
     index() {

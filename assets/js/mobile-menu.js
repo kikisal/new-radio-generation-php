@@ -30,8 +30,14 @@
             });
 
             this._menuDrawer.addEventListener('transitionend', this.onDrawerTransitionEnd.bind(this));
+            this._overlayElement.addEventListener('click', this.onOverlayElementClick.bind(this));
             this._loadTabElementMap();
-       }
+        }
+
+        onOverlayElementClick(e) {
+            if (!this._menuDrawer.contains(e.target))
+                this.closeMenu();
+        }
 
         onMobileMenuClick() {
             if (!this._opened) {

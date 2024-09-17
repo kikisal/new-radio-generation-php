@@ -22,18 +22,27 @@
                 FEEDER_ENDPOINT:                '<?= SITE_URL ?>/api/feeds',
                 FEEDER_CREATE_SESSION_ENDPOINT: '<?= SITE_URL ?>/api/fcs',
                 RETRY_FEED_TIMEOUT: 5000, // 5sec
-                MAX_RETRYING_ATTEMPS: 10
+                MAX_RETRYING_ATTEMPS: 10,
+
+                RADIO_STREAMING_URL: 'radiourl.com',
             };
         })(window);
     </script>
 
     <script src="<?= SITE_URL ?>/assets/js/date-formatter.js?<?= cv(); ?>"></script>
     
+    <!-- Core Components -->
     <script src="<?= SITE_URL ?>/assets/js/core.js?v=<?= cv(); ?>"></script>
+    <script src="<?= SITE_URL ?>/assets/js/audio-player.js?v=<?= cv(); ?>"></script>
+
+    <!-- DOM Renderer -->
     <script src="<?= SITE_URL ?>/assets/js/dom-renderer.js?v=<?= cv(); ?>"></script>
     
+    <!-- Feeder -->
     <script src="<?= SITE_URL ?>/assets/js/feeder.js?v=<?= cv(); ?>"></script>
 
+    <!-- Static UX Handlers -->
+    <script src="<?= SITE_URL; ?>/assets/js/radio-bar.js?v=<?= cv(); ?>"></script>
     <script src="<?= SITE_URL; ?>/assets/js/mobile-menu.js?v=<?= cv(); ?>"></script>
 
     <!-- Views -->
@@ -46,7 +55,7 @@
     <!-- RadioGen App -->
     <script src="<?= SITE_URL ?>/assets/js/radiogen-app.js?v=<?= cv(); ?>"></script>
 
-
+    <!-- Standalone Image Slider -->
     <script defer src="<?= SITE_URL ?>/assets/js/image-slider.js?v=<?= cv(); ?>"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -227,13 +236,13 @@
             </div>
         </div>
     </div>
-    <div class="radio-overlay">
+    <div class="radio-overlay" --radio-bar-overlay>
         <div class="radio-wrapper">
             <div class="flex align-center space-between">
                 <div class="flex align-center">
-                    <div class="radio-button">
+                    <div class="radio-button" --play-button>
                         <div class="radio-play-circle">
-                            <div class="play-button playing"></div>
+                            <div class="play-button" --play-icon></div>
                         </div>
                     </div>
                     <div class="radio-text">
