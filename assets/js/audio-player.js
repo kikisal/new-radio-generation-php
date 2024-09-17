@@ -116,6 +116,10 @@
             return this._currentSoundBox == sb && this._isLoaded;
         }
 
+        getCurrentSoundBox() {
+            return this._currentSoundBox;
+        }
+
         loadSoundBox(sb) {
             if (this._isLoading)
                 return;

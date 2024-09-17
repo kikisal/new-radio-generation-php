@@ -139,7 +139,8 @@
 
         onCleared() {
             try {
-                this._audioPlayer.pause();
+                if (this._audioPlayer.getCurrentSoundBox() == this.getSoundBox())
+                    this._audioPlayer.pause();
             } catch(ex) {
 
             }
