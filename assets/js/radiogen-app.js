@@ -15,6 +15,9 @@ class RadioGenApp extends GlobalRouting {
             '/view-post': this.viewPost()
         });
 
+
+        // this.setMiddleWare(this.middleware());
+
         this._currentPage      = this.uri();
         this._feederViewElement = domSelect('feeder-view');
 
@@ -53,26 +56,29 @@ class RadioGenApp extends GlobalRouting {
 
     index() {
         return () => {
+            this._scrollingWatcher.setActiveListener('news-feeder');
+            
             this.toggleHeaderTab(this._homeHeaderTab, false);
 
-            this._scrollingWatcher.setActiveListener('news-feeder');
             this.switchPage("news-feeder");
         };
     }
 
     podcast() {
         return () => {
+            this._scrollingWatcher.setActiveListener('podcast-feeder');
+            
             this.toggleHeaderTab(this._podcastHeaderTab, false);
 
-            this._scrollingWatcher.setActiveListener('podcast-feeder');
             this.switchPage("podcast-feeder");
         };
     }
 
     programs() {
         return () => {
-            this.toggleHeaderTab(this._programsHeaderTab, false);
             this._scrollingWatcher.setActiveListener('programs-feeder');
+            
+            this.toggleHeaderTab(this._programsHeaderTab, false);
 
             this.switchPage("programs-feeder");
         };
@@ -80,6 +86,8 @@ class RadioGenApp extends GlobalRouting {
 
     aboutUs() {
         return () => {
+            this._scrollingWatcher.detachListener();
+
             this.toggleHeaderTab(this._aboutUsHeaderTab, false);
             this.switchPage("about-us");
         };
@@ -87,8 +95,10 @@ class RadioGenApp extends GlobalRouting {
 
     viewPost() {
         return () => {
+            this._scrollingWatcher.detachListener();
+
             this.toggleHeaderTab(null, false);
-            this.switchPage("view-post");    
+            this.switchPage("view-post");
         }
     }
     

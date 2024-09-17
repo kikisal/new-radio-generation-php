@@ -47,6 +47,25 @@
                 return null;
         }
     }
+
+    class MarkupComponent {
+        constructor(viewClass, props) {
+            this._viewClass  = viewClass;
+            this._props      = props;
+        }
+
+        static create(viewClass, props) {
+            return new MarkupComponent(viewClass, props);
+        }
+
+        get viewClass() {
+            return this._viewClass;
+        }
+
+        get props() {
+            return this._props;
+        }
+    }
     
     class View {
         constructor() {
@@ -68,8 +87,46 @@
             this._appendIndex  = 0;
     
             this._innerText   = null;
+
+            this._events      = new Map/*<string, EventFunction[]>*/();
         }
     
+        addEventListener(event, fn) {
+            if (!this.getViewElement())
+                return;
+
+            let list = this._events.get(event);
+            if (!list) {
+                list = [];
+                this._events.set(event, list);
+            }
+
+            list.push(fn);
+
+            this.getViewElement().addEventListener(event, fn);
+        }
+
+        removeEventListener(event, fn) {
+            if (!this.getViewElement())
+                return;
+            
+            const list = this._events.get(event);
+            if (!list)
+                return;
+
+            if (list.length < 1)
+            {
+                this._events.delete(event);
+                return;
+            }
+
+            const index = list.indexOf(fn);
+            if (index < 0)
+                return;
+
+            this.getViewElement().removeEventListener(event, fn);
+            list.splice(index, 1);            
+        }
        
         setCanClear(state) {
             this._canClear = state;
@@ -89,9 +146,21 @@
     
             if (this.renderMode == 'append')
                 this._children = [];
+
+            const viewElement = this.getViewElement();
     
-            if (this.getViewElement())
+            if (viewElement) {
+                for (const pair of this._events) {
+                    const type   = pair[0];
+                    const events = pair[1];
+                    for (const e of events)
+                        viewElement.removeEventListener(type, e);        
+                }
+
                 this.getViewElement().innerHTML = '';
+            }
+
+            this._events.clear();
     
             this.onCleared();
         }
@@ -145,7 +214,10 @@
         getProps() {
             return this._props;
         }
-    
+
+        markupComponent(viewClass, props) {
+            return MarkupComponent.create(viewClass, props);
+        }
     
         _domBuilder(parent, docObj) {
             const compClass = compClassFromString(docObj.component);
@@ -166,7 +238,10 @@
     
             if ('children' in docObj && Array.isArray(docObj.children) && docObj.children.length > 0) {
                 for (const c of docObj.children) {
-                    this._domBuilder(comp, c);
+                    if (c instanceof MarkupComponent)
+                        comp.appendComponent(comp.createComponent(c.viewClass, c.props));
+                    else
+                        this._domBuilder(comp, c);
                 }
             }
     
@@ -194,6 +269,13 @@
                 return;
     
             this.getViewElement().classList.add(...classList);
+        }
+
+        setAttribute(key, value) {
+            if (!this.getViewElement())
+                return;
+    
+            this.getViewElement().setAttribute(key, value);
         }
     
         hasChildren() {
@@ -224,6 +306,7 @@
                     let result = this._getByKey(c, key);
                     if (!result)
                         continue;
+                    return result;
                 }
             }
     
@@ -680,7 +763,9 @@
     
             if (c.renderMode == 'replace')
                 viewElement.innerHTML = '';
-    
+   
+            
+
             c.render();
     
             if (!c.children())

@@ -45,6 +45,11 @@
     <script src="<?= SITE_URL; ?>/assets/js/radio-bar.js?v=<?= cv(); ?>"></script>
     <script src="<?= SITE_URL; ?>/assets/js/mobile-menu.js?v=<?= cv(); ?>"></script>
 
+    <!-- Views Components -->
+    <script src="<?= SITE_URL ?>/assets/js/views/components/row-stream-component.js"></script>
+    <script src="<?= SITE_URL ?>/assets/js/views/components/feed-cell.js?v=<?=cv();?>"></script>
+    
+
     <!-- Views -->
     <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();?>"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/feed-podcast-view.js?v=<?=cv();?>"></script>

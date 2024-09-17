@@ -119,6 +119,7 @@ function genRandomFeeds($count, $nameTable, $descTable) {
             "id"          => $i, 
             "name"        => $nameTable[rand(0, count($nameTable) - 1)],
             "description" => $descTable[rand(0, count($descTable) - 1)],
+            "audio_url"   => SITE_URL . '/assets/audio/audiqo.mp3',
             "image_url"   => 'https://picsum.photos/300/300',
             "timestamp"   => $timestamps[rand(0, count($timestamps) - 1)],
         ];

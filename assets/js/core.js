@@ -165,6 +165,10 @@
             this._listenerMap    = new Map();
             this._activeListener = null;
         }
+        
+        detachListener() {
+            this._activeListener = null;
+        }
     
         registerListener(name, listener) {
             this._listenerMap.set(name, listener);
@@ -208,7 +212,6 @@
         }
     
         onScrollBottom() {
-    
             if (this._activeListener && this._listenerMap.has(this._activeListener))
                 this._listenerMap.get(this._activeListener).onScrollBottom();
         }

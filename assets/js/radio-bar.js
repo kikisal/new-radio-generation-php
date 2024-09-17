@@ -70,13 +70,12 @@
         }
         
         onAudioDispatch() {
-
+            this._playIcon.classList.remove('playing');
         }
         
         onPlayButtonClick() {
             if (this._audioError) 
                 return;
-            
 
             this._soundBoxLoaded = this.getAudioPlayer().isSoundBoxLoaded(this.getSoundBox());
             if (!this._soundBoxLoaded) {
