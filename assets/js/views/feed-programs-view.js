@@ -15,7 +15,7 @@
             this._topFeeds = [];
     
             this.setFeedsPerRow(TopNewsFeeds.FEEDS_PER_ROW);
-            this.setType('program');
+            this.setType('programs');
         }
     
         onViewCreated() {
@@ -55,7 +55,7 @@
             super(config);
     
             this.setFeedsPerRow(FEEDS_PER_ROW);
-            this.setType('program');
+            this.setType('programs');
         }
     }
 

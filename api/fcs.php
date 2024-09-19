@@ -11,7 +11,6 @@ $feedTimestamp = time();
 // to fetch feeds from this timestamp and below.
 $_SESSION['feed_timestamp'] = $feedTimestamp;
 
-
 HTTPResponse::json([
     'status'    => 'CREATED',
     'timestamp' => $feedTimestamp

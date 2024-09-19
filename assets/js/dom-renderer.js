@@ -418,6 +418,23 @@
         }
     }
     
+    class StatefulComponent extends CustomComponent {
+        constructor(state) {
+            super();
+            this._state = state;
+        }
+
+        onStateUpdate(state) {
+            this._state = state;
+            return true;
+        }
+
+        getState() {
+            return this._state;
+        }
+    }
+
+
     // --- stock components ---
     class HTMLDivComponent extends View {
         constructor() {
@@ -838,6 +855,7 @@
     m.compClassFromString   = compClassFromString;
     m.View                  = View;
     m.CustomComponent       = CustomComponent;
+    m.StatefulComponent     = StatefulComponent;
     m.HTMLDivComponent      = HTMLDivComponent;
     m.HTMLImageComponent    = HTMLImageComponent;
     m.HTMLSpanComponent     = HTMLSpanComponent;

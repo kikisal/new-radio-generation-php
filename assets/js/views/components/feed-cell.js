@@ -238,7 +238,7 @@
                             {
                                 component: 'div',
                                 classList: ['text-title'],
-                                textContent: this.getPostData().name
+                                textContent: this.getPostData().title
                             },
                             {
                                 component: 'div',
@@ -302,7 +302,7 @@
                             {
                                 component: 'div',
                                 classList: ['text-title'],
-                                textContent: this.getPostData().name
+                                textContent: this.getPostData().title
                             },
                             {
                                 component: 'div',

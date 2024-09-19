@@ -9,8 +9,8 @@
 ((m) => {
 
     class AudioPlayer extends Module {
-        constructor() {
-            super('AudioPlayer');
+        constructor(ignore) {
+            super('AudioPlayer', ignore);
             this._currentSoundBox = null;
             this._audioElement    = new Audio();
             
@@ -37,6 +37,8 @@
         }
 
         onAudioError(e) {
+            console.log(this._audioElement.error);
+            
             this._isLoaded  = false;
             this._isLoading = false;
 
@@ -72,6 +74,28 @@
 
             this._audioElement.pause();
             return true;
+        }
+
+        currentTime() {
+            return this._audioElement.currentTime;
+        }
+
+        setTime(time) {
+            if (!this.ready())
+                return;
+
+            this._audioElement.currentTime = time;
+        }
+
+        duration() {
+            return this._audioElement.duration;
+        }
+
+        normalizedTime() {
+            if (!this.ready())
+                return 0;
+
+            return this._audioElement.currentTime / this._audioElement.duration;
         }
 
         fireEvent(event) {
@@ -140,8 +164,8 @@
             this._audioElement.load();
         }
         
-        static create() {
-            return new AudioPlayer();
+        static create(ignore) {
+            return new AudioPlayer(ignore);
         }
     }
 

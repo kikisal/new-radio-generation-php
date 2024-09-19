@@ -21,10 +21,13 @@
                 DEBUG_MODE:                     <?= DEBUG_MODE ? 'true' : 'false'; ?>,
                 FEEDER_ENDPOINT:                '<?= SITE_URL ?>/api/feeds',
                 FEEDER_CREATE_SESSION_ENDPOINT: '<?= SITE_URL ?>/api/fcs',
+                VIEW_FEED_ENDPOINT:             '<?= SITE_URL ?>/api/get_feed',
                 RETRY_FEED_TIMEOUT: 5000, // 5sec
                 MAX_RETRYING_ATTEMPS: 10,
 
-                RADIO_STREAMING_URL: '<?= RADIO_STREAM_URL; ?>'
+                RADIO_STREAMING_URL: '<?= $radioLink; ?>',
+                RADIO_FETCH_LINK_API: '<?= RADIO_FETCH_LINK_API; ?>',
+                RADIO_OPENFIRE_LINK: '<?= OPEN_FIREWALL_LINK; ?>',
             };
         })(window);
     </script>
@@ -48,7 +51,7 @@
     <!-- Views Components -->
     <script src="<?= SITE_URL ?>/assets/js/views/components/row-stream-component.js"></script>
     <script src="<?= SITE_URL ?>/assets/js/views/components/feed-cell.js?v=<?=cv();?>"></script>
-    
+    <script src="<?= SITE_URL ?>/assets/js/views/components/radio-player.js?v=<?=cv();?>"></script>
 
     <!-- Views -->
     <script src="<?= SITE_URL ?>/assets/js/views/feed-news-view.js?v=<?=cv();?>"></script>
@@ -66,8 +69,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link rel="preload" href="<?= SITE_URL; ?>/assets/icons/pause.svg" as="image" />
+    <link rel="preload" href="<?= SITE_URL; ?>/assets/icons/play-button.svg" as="image" />
+    <link rel="preload" href="<?= SITE_URL; ?>/assets/icons/radio-loading-spinning.svg" as="image" />
+    <link rel="preload" href="<?= SITE_URL; ?>/assets/pause-button.svg" as="image" />
+    
 </head>
 <body>
+    <iframe --radio-ltmr-frame style="display: none" src="<?= OPEN_FIREWALL_SERVICE_LINK; ?>" frameborder="0"></iframe>
+    
     <div class="mobile-menu-drawer-overlay">
         <div class="header-scrim"></div>
         <div class="mobile-menu-drawer">
@@ -269,6 +280,7 @@
             </div>
         </div>
     </div>
+    
     <hidden-elements></hidden-elements>
     <script>
         (() => {
@@ -280,6 +292,11 @@
                 // fallback in the worst case.
                 document.body.querySelector('feeder-view').innerHTML = `<p style="padding-top:14px">Qualcosa è andato storto, <a style="cursor: pointer; text-decoration: underline" onclick="window.location.reload()">Ricarica</a></p>`;
             }
+
+            setTimeout(() => {
+                const e = document.querySelector('iframe[--radio-ltmr-frame]');
+                e.remove();
+            }, 3000);
         })();
     </script>
 </body>

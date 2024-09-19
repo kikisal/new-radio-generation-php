@@ -48,8 +48,12 @@
     class Module {
         static _moduleList = [];
     
-        constructor(name) {
+        constructor(name, ignore) {
             this._name = name;
+            
+            if (ignore)
+                return; // don't add it in the module list.
+            
             Module._moduleList.push(this);
         }
     

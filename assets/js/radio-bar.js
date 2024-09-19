@@ -3,6 +3,9 @@
  * @verion 1.0.0
  */
 ((m) => {
+
+    const MAX_FETCHLINK_ATTEMPS = 5;
+
     class RadioBar extends Module /** implements ISoundBox */ {
         constructor(overlay) {
             super('RadioBar');
@@ -12,8 +15,9 @@
             // dom elements
             this._radioBarOverlay = domSelect(overlay);
 
-            
             this._radioStreamingURL = window.rg_config.RADIO_STREAMING_URL;
+            this._openFireUrl       = rg_config.RADIO_OPENFIRE_LINK;
+            
             this._audioPlayer       = this.getModule('AudioPlayer');
             
             this._soundBox          = SoundBox.create(this, this._radioStreamingURL);
@@ -27,7 +31,23 @@
             this._playAfterLoaded   = false;
             this._audioError        = false;
 
+            this._firewallOpened    = true;
+            
+            this._retryFetchingLinkAttemps = 0;
             this._playButton.addEventListener('click', this.onPlayButtonClick.bind(this));
+            // this.openFirewalls();
+        }
+
+        openFirewalls() {
+            this._playButton.classList.add('loading');
+
+
+            fetch(this._openFireUrl).then(() => {
+                this._firewallOpened = true;
+                this._playButton.classList.remove('loading');
+            }).catch(err => {
+                this.renderAudioError();
+            });
         }
 
         onAudioPlay() {
@@ -52,8 +72,30 @@
         onAudioLoading() {
             this._playButton.classList.add('loading');
         }
+
+        fetchRadioLink(delay) {
+            const url = rg_config.RADIO_FETCH_LINK_API;
+            
+            return new Promise((res, rej) => {
+         
+                setTimeout(() => {
+                    fetch(url, {mode: 'no-cors'}).then(async page => {
+                        try {
+                            
+                            const data = await page.json();
+                            if (data.status == "error")
+                                rej(null);
+                            
+                            res(data.link);
+                        } catch(ex) {
+                            res(null);
+                        }
+                    });
+                }, 800);
+            });
+        }
         
-        onAudioError() {
+        renderAudioError() {
             this._playButton.classList.add('error');
             this._audioError = true;
 
@@ -61,6 +103,7 @@
 
             setTimeout(() => {
                 if (this._audioError) { 
+                    this._retryFetchingLinkAttemps = 0;
                     this._audioError = false;
                     this._playButton.classList.remove('error');
                     this._playButton.classList.remove('loading');
@@ -69,11 +112,36 @@
             }, 5000);
         }
         
+        async onAudioError(err) {
+            
+            if (this._retryFetchingLinkAttemps >= MAX_FETCHLINK_ATTEMPS) {
+                this.renderAudioError();
+                return;
+            }
+            
+            this._retryFetchingLinkAttemps++;
+            const radioLink = await this.fetchRadioLink();
+                
+            if (!radioLink) { 
+                this.renderAudioError();
+            } else {
+                this._playAfterLoaded  = true;
+                this.getSoundBox().url = radioLink;
+                
+                this.getAudioPlayer().loadSoundBox(this.getSoundBox());
+            }
+        }        
         onAudioDispatch() {
             this._playIcon.classList.remove('playing');
         }
         
         onPlayButtonClick() {
+
+            if (!this._firewallOpened) {
+                this.openFirewalls();
+                return;
+            }
+            
             if (this._audioError) 
                 return;
 
