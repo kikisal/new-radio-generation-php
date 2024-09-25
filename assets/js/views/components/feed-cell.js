@@ -37,8 +37,8 @@
             this._soundBoxLoaded  = false;
             this._playAfterLoaded = false;
             this._loadingSoundBox = false;
-
-            if ('audio_url' in data && data.audio_url.length > 0)
+            
+            if ('audio_url' in data && data.audio_url && data.audio_url.length > 0)
                 this._soundBox = SoundBox.create(this, data.audio_url);
         }
 
@@ -225,7 +225,7 @@
                                 component: 'img',
                                 src: this.getPostData().image_url + `?c=${++_globalCacheIndex}`
                             },
-                            ('audio_url' in this.getPostData()) ? this.markupComponent(PlayComponent, {
+                            ('audio_url' in this.getPostData() && this.getPostData().audio_url) ? this.markupComponent(PlayComponent, {
                                 id:  this.getPostData().id,
                                 audioUrl: this.getPostData().audio_url
                             }) : {}
@@ -289,7 +289,7 @@
                                 component: 'img',
                                 src: this.getPostData().image_url + `?c=${++_globalCacheIndex}`
                             },
-                            ('audio_url' in this.getPostData()) ? this.markupComponent(PlayComponent, {
+                            ('audio_url' in this.getPostData() && this.getPostData().audio_url) ? this.markupComponent(PlayComponent, {
                                 id:  this.getPostData().id,
                                 audioUrl: this.getPostData().audio_url
                             }) : {}

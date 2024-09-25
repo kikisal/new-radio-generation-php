@@ -48,6 +48,7 @@
         }
     
         onStateUpdate(streamData) {
+            
             this._streamData = streamData;
             return true;
         }
@@ -71,6 +72,7 @@
         }
         // to fix: Last feed rows are not filled with cells.
         render() {
+            
     
             if (!this._streamData || this._streamData.length < 1)
                 return;
@@ -116,10 +118,7 @@
     
             // new feeds here.
             // <div class="v-separator-even-3"></div>
-            this.append(this.putInBetween(rows, {
-                component: 'div',
-                classList: ['v-separator-even-3']
-            }));
+            this.append(rows);
         }
     }
 

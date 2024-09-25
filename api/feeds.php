@@ -28,7 +28,7 @@ if (!$type)
 $conn = $db->getConnection();
 
 try {
-    $stmt = $conn->prepare("SELECT * FROM `feeds` WHERE `type` = ? AND `timestamp` < ? ORDER BY `timestamp` DESC LIMIT $start, $itemCount");
+    $stmt = $conn->prepare("SELECT `id`, `type`, `timestamp`, `image_url`, `audio_url`, `title` FROM `feeds` WHERE `type` = ? AND `timestamp` < ? ORDER BY `timestamp` DESC LIMIT $start, $itemCount");
     $stmt->bindParam(1, $type, PDO::PARAM_STR);
     $stmt->bindParam(2, $feedTimestamp);
     $stmt->execute();

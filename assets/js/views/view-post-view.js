@@ -32,6 +32,22 @@
             return `${years} ann${years !== 1 ? 'i' : 'o'} fa`;
         }
     }
+    
+    
+    function videoFile(url) {
+        const video = document.createElement('video');
+
+        video.classList.add('video-viewer');
+        video.src = url;
+        
+        video.controls = true; 
+        video.autoplay = false; 
+        video.width = 640;
+        video.height = 360;
+        
+        return video;  
+    }
+    
 
     function ytembed(yturl) {
         /*<iframe style="width: 100%" height="500" src="https://www.youtube.com/embed/2B0fznAtVzM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>*/
@@ -53,8 +69,6 @@
 
     class ViewPostPage {
 
-   
-
         constructor(elementQuery) {
             this._targetElement = domSelect(elementQuery);
 
@@ -73,6 +87,9 @@
             this._authorDot          = this._page.querySelector('[--dot]');
             this._overlay            = this._page.querySelector('[--overlay]');
             this._mediaArea          = this._overlay.querySelector('media-area');
+            this._postImage          = this._page.querySelector('.post-image');
+            this._postImageImage     = this._postImage.querySelector('img');
+            
 
             this._audioPlayer        = null;
 
@@ -106,6 +123,7 @@
                     this.onFeedFetched(data);
             } catch(ex) {
                 this.onFetchError();
+                console.log(ex);
             }
         }
 
@@ -130,7 +148,19 @@
 
             this._timeElement.textContent  = timeSince(feed.timestamp * 1000);
             
+            if (feed.image_url) {
+                this._postImage.classList.remove('_hide');
+                this._postImageImage.src = feed.image_url;
+            } else {
+                this._postImage.classList.add('_hide');
+                this._postImageImage.src = '';
+            }
+            
             this._mediaArea.innerHTML = '';
+            
+            if (feed.video_file_url) {
+                this._mediaArea.appendChild(videoFile(feed.video_file_url));
+            }
             
             if (feed.video_urls)
                 this._mediaArea.appendChild(ytembed(feed.video_urls));
@@ -175,7 +205,12 @@
 
     m.ViewPostPage = ViewPostPage;
 
-    const VIEW_POST_HTML = `<div class="over" id="over">
+    const VIEW_POST_HTML = `
+    <div class="over" id="over">
+        <div class="post-image">
+            <img src="" class="post-img" alt="" />
+        </div>
+        
         <div class="overlay" --overlay>
             <div class="new image" --author-img>
                 <div class="img"></div>
@@ -188,11 +223,12 @@
                     <div --author stlye="color:black">Sanny J</div>
                 </div>
             </div>
+            <media-area class="vp-margin"></media-area>
             <div class="new desc" --content>
                 Articolo di prova
             </div>
-            <media-area class="vp-margin"></media-area>
         </div>
-    </div>`;
+    </div>
+    `;
     
 })(window);

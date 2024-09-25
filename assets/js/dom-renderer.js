@@ -768,7 +768,8 @@
                 
                 if (view == 'stack-trace-view')
                     throw new Error('stack-trace-view couln\t render: ', exception); // to avoid possible infinite recursion
-    
+                console.log(exception);
+                
                 this._debugger.log(`Uncaught Exception: ${exception}`);
             }
     

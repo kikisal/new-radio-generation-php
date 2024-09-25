@@ -3,6 +3,14 @@
  * for any bugs, report it here: https://github.com/kikisal/new-radio-generation-php/issues 
  */
 
+function goTo(link) {
+    const a  = document.createElement('a');
+    a.href   = link;
+    a.target = "_blank";
+    a.click();
+    return a;
+}
+
 class RadioGenApp extends GlobalRouting {
     constructor() {
         super({});
@@ -51,11 +59,26 @@ class RadioGenApp extends GlobalRouting {
         ], this.toggleHeaderTab.bind(this));
 
         this._mobileHeader = MobileMenu.create(".mobile-menu-drawer-overlay", this);
-        this._radioBar     = RadioBar.create("[--radio-bar-overlay]");        
+        this._radioBar     = RadioBar.create("[--radio-bar-overlay]");
+        
+        this.facebookIcons  = document.querySelectorAll('[--key="facebook-icon"]');
+        this.instagramIcons = document.querySelectorAll('[--key="instagram-icon"]');
+        
+        this.facebookIcons.forEach(icon => {
+            icon.addEventListener('click',  () => goTo("https://www.facebook.com/share/fYZjFybeYRnJYUJF/"));
+        });
+        
+        this.instagramIcons.forEach(icon => {
+            icon.addEventListener('click', () => goTo("https://www.instagram.com/radiogenerationtv?igsh=aHJmMWp2OWs0c2lp"));
+        });
+        
+        this.imageSlider = document.querySelector('.image-slider');
+        
     }
 
     index() {
         return () => {
+            this.imageSlider.classList.remove('display-none');
             this._scrollingWatcher.setActiveListener('news-feeder');
             
             this.toggleHeaderTab(this._homeHeaderTab, false);
@@ -66,6 +89,7 @@ class RadioGenApp extends GlobalRouting {
 
     podcast() {
         return () => {
+            this.imageSlider.classList.remove('display-none');
             this._scrollingWatcher.setActiveListener('podcast-feeder');
             
             this.toggleHeaderTab(this._podcastHeaderTab, false);
@@ -76,6 +100,7 @@ class RadioGenApp extends GlobalRouting {
 
     programs() {
         return () => {
+            this.imageSlider.classList.remove('display-none');
             this._scrollingWatcher.setActiveListener('programs-feeder');
             
             this.toggleHeaderTab(this._programsHeaderTab, false);
@@ -86,6 +111,8 @@ class RadioGenApp extends GlobalRouting {
 
     aboutUs() {
         return () => {
+            this.imageSlider.classList.remove('display-none');
+            
             this._scrollingWatcher.detachListener();
 
             this.toggleHeaderTab(this._aboutUsHeaderTab, false);
@@ -95,6 +122,7 @@ class RadioGenApp extends GlobalRouting {
 
     viewPost() {
         return () => {
+            this.imageSlider.classList.add('display-none');
             this._scrollingWatcher.detachListener();
 
             this.toggleHeaderTab(null, false);

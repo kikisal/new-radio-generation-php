@@ -45,8 +45,10 @@
     
         onStateUpdate(feedsStream) {
             this.updateFeedsCount(feedsStream);
-    
-            return super.onStateUpdate(this._topFeeds);
+
+            const render = super.onStateUpdate(this._topFeeds);
+            this._topFeeds = [];
+            return render;
         }
     }
     
@@ -167,13 +169,18 @@
         }
     
         onPropsUpdated() {
-
             const props = this.getProps();
             
-            if (this._feedsCursor < 2)
+            let smallFeeds = props.feeds;
+            
+            if (this._feedsCursor < 2) {
+                const topFeeds = props.feeds.slice(0, 2);
                 this._topFeedsComponent.updateState(props.feeds);
-    
-            this._smallFeedsComponent.updateState(props.feeds);
+
+                smallFeeds = props.feeds.slice(topFeeds.length);
+            }
+
+            this._smallFeedsComponent.updateState(smallFeeds);
     
             this._feedsCursor += props.feeds.length;
             

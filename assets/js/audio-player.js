@@ -145,6 +145,9 @@
         }
 
         loadSoundBox(sb) {
+            if (!sb)
+                return;
+            
             if (this._isLoading)
                 return;
 

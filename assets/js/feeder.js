@@ -178,7 +178,7 @@
                 this._feeds = this._feeds.concat(newFeeds);
                 hasNewFeeds = true;
             }
-    
+
             // render new feeds.
             this._domRenderer.renderView("feeds-view", {
                 feeds: newFeeds,
